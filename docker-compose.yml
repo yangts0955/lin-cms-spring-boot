@@ -5,9 +5,13 @@ services:
     build: .
     image: cms-system:1.0
     ports:
-      - "10100:80"
+      - "10200:80"
     environment:
       - MYSQL_HOST=db_mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=alice
+      - MYSQL_PASSWORD=123456
+      - SERVICE_ENVIRONMENT=dev
     depends_on:
       db_mysql:
         condition: service_healthy
