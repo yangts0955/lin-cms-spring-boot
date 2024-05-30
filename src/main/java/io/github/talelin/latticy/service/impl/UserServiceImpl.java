@@ -14,6 +14,7 @@ import io.github.talelin.latticy.common.enumeration.GroupLevelEnum;
 import io.github.talelin.latticy.common.mybatis.LinPage;
 import io.github.talelin.latticy.common.util.BeanCopyUtil;
 import io.github.talelin.latticy.common.util.CaptchaUtil;
+import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.user.ChangePasswordDTO;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.dto.user.UpdateInfoDTO;
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.awt.*;
+import java.awt.FontFormatException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -85,7 +86,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         UserDO user = new UserDO();
         BeanUtils.copyProperties(dto, user);
+        user.setGender(CommonUtil.getGenderName(dto.getGender()));
+        user.setGrade(CommonUtil.getGradeName(dto.getGrade()));
+        user.setRole(CommonUtil.getRoleName(dto.getRole()));
         this.baseMapper.insert(user);
+
         if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
             checkGroupsValid(dto.getGroupIds());
             checkGroupsExist(dto.getGroupIds());

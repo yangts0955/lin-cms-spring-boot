@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FileDO> implements 
      */
     @Autowired
     private FileProperties fileProperties;
+
+    @Autowired
+    private FileMapper fileMapper;
 
     /**
      * 为什么不做批量插入
@@ -71,6 +75,15 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, FileDO> implements 
     @Override
     public boolean checkFileExistByMd5(String md5) {
         return this.getBaseMapper().selectCountByMd5(md5) > 0;
+    }
+
+    @Override
+    public FileBO getFile(String fileName) {
+        FileDO file = fileMapper.selectByFileName(fileName);
+        if (ObjectUtils.isEmpty(file)) {
+            throw new IllegalStateException("image does not exist");
+        }
+        return transformDoToBo(file, fileName);
     }
 
     private FileBO transformDoToBo(FileDO file, String key) {

@@ -33,4 +33,11 @@
         AND f.is_deleted = 0
     </select>
 
+    <select id="selectByFileName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT *
+        FROM lin_file f
+        WHERE
+        f.name = #{fileName}
+        AND f.is_deleted = 0
+    </select>
 </mapper>

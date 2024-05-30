@@ -1,11 +1,11 @@
 package io.github.talelin.latticy.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import io.github.talelin.latticy.model.enums.GenderEnum;
+import io.github.talelin.latticy.model.enums.GradeEnum;
+import io.github.talelin.latticy.model.enums.RoleEnum;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -43,5 +43,18 @@ public class UserDO extends BaseModel implements Serializable {
      * 邮箱
      */
     private String email;
+
+    private Integer age;
+
+    @TableField(value = "`gender`")
+    private GenderEnum gender;
+
+    private String remark;
+
+    @TableField(value = "`role`")
+    private RoleEnum role;
+
+    @TableField(value = "`grade`")
+    private GradeEnum grade;
 
 }

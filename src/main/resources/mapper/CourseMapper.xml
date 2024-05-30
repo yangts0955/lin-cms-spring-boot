@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.talelin.latticy.mapper.course.CourseMapper">
+
+    <resultMap id="courseResultMap" type="io.github.talelin.latticy.vo.course.CourseVO">
+        <id property="courseId" column="id"/>
+        <result property="name" column="name"/>
+        <result property="subject" column="subject"/>
+        <result property="grade" column="grade"/>
+        <result property="profit" column="profit"/>
+        <collection property="schedules" ofType="io.github.talelin.latticy.vo.course.ScheduleVO"
+                    foreignColumn="course_id" column="id" select="getSchedulesByCourseId"/>
+    </resultMap>
+
+    <resultMap id="scheduleResultMap" type="io.github.talelin.latticy.vo.course.ScheduleVO">
+        <id property="scheduleId" column="id"/>
+        <result property="courseDate" column="course_date"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="duration" column="duration"/>
+        <result property="courseStatus" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="profit" column="profit"/>
+        <association property="teacherId" javaType="java.lang.Integer" column="id" select="getTeacherIdByScheduleId"/>
+        <association property="teacherName" javaType="java.lang.String" column="id"
+                     select="getTeacherNameByScheduleId"/>
+        <collection property="studentIds" ofType="java.lang.Integer" column="id" select="getStudentsByScheduleId"/>
+        <collection property="studentNames" ofType="java.lang.String" column="id" select="getStudentNamesByScheduleId"/>
+    </resultMap>
+
+    <select id="queryAllCourses" resultMap="courseResultMap">
+        SELECT * FROM t_course tc WHERE tc.is_deleted = 0
+    </select>
+
+    <select id="queryAllCoursesByTeacherId" resultMap="courseResultMap">
+        SELECT DISTINCT
+        tc.id,
+        tc.name,
+        tc.subject,
+        tc.grade,
+        tc.profit
+        from t_course tc
+        left join t_schedule ts on tc.id = ts.course_id and ts.is_deleted = 0
+        left join t_schedule_teacher tst on tst.schedule_id = ts.id and tst.is_deleted = 0
+        where
+        tst.teacher_id = #{teacherId} and tc.is_deleted = 0 ;
+    </select>
+
+    <select id="queryAllCoursesByStudentId" resultMap="courseResultMap">
+        SELECT DISTINCT
+        tc.id,
+        tc.name,
+        tc.subject,
+        tc.grade,
+        tc.profit
+        from t_course tc
+        left join t_schedule ts on tc.id = ts.course_id and ts.is_deleted = 0
+        left join t_schedule_student tss on tss.schedule_id = ts.id and tss.is_deleted = 0
+        where
+        tss.student_id = #{studentId} and tc.is_deleted = 0 ;
+    </select>
+
+    <select id="getSchedulesByCourseId" parameterType="java.lang.Integer" resultMap="scheduleResultMap">
+        SELECT *
+        FROM t_schedule s
+        LEFT OUTER JOIN t_accounting_summary tas ON tas.schedule_id = s.id and tas.is_deleted = 0
+        LEFT OUTER JOIN t_schedule_teacher st ON st.schedule_id = s.id and st.is_deleted = 0
+        WHERE
+        course_id = #{courseId} and s.is_deleted = 0
+        ORDER BY s.course_date
+    </select>
+
+    <select id="getStudentsByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+        student_id
+        FROM
+        t_schedule_student tss
+        WHERE
+        tss.schedule_id = #{scheduleId} and tss.is_deleted = 0
+    </select>
+
+    <select id="getTeacherIdByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+        teacher_id
+        FROM
+        t_schedule_teacher tst
+        WHERE
+        tst.schedule_id = #{scheduleId} and tst.is_deleted = 0
+    </select>
+
+    <select id="getStudentNamesByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT
+        lu.username as studentName
+        from t_schedule ts
+        left join t_schedule_student tss on tss.schedule_id = ts.id and tss.is_deleted = 0
+        left join t_student ts2 on ts2.id = tss.student_id and ts2.is_deleted = 0
+        left join lin_user lu on lu.id = ts2.user_id and lu.is_deleted = 0
+        where
+        ts.id = #{scheduleId} and ts.is_deleted = 0;
+    </select>
+
+    <select id="getTeacherNameByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT
+        lu.username as teacherName
+        from lin_user lu
+        left join t_teacher tt on tt.user_id = lu.id and tt.is_deleted = 0
+        left JOIN t_schedule_teacher tst on tst.teacher_id = tt.id and tst.is_deleted = 0
+        left JOIN t_schedule ts on ts.id = tst.schedule_id and ts.is_deleted = 0
+        WHERE
+        ts.id = #{scheduleId} and lu.is_deleted = 0 ;
+    </select>
+</mapper>

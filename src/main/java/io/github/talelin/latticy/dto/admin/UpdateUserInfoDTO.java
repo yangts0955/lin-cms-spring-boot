@@ -17,4 +17,8 @@ public class UpdateUserInfoDTO {
     @NotEmpty(message = "{group.ids.not-empty}")
     private List<@Min(1) Integer> groupIds;
 
+    private Integer age;
+    private String gender;
+    private String grade;
+    private String remark;
 }

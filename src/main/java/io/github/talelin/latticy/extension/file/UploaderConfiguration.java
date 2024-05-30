@@ -14,13 +14,11 @@ import org.springframework.core.annotation.Order;
  */
 @Configuration(proxyBeanMethods = false)
 public class UploaderConfiguration {
-    /**
-     * @return 本地文件上传实现类
-     */
+
     @Bean
     @Order
     @ConditionalOnMissingBean
     public Uploader uploader(){
-        return new LocalUploader();
+        return new QiniuUploader();
     }
 }

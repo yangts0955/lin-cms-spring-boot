@@ -1,20 +1,27 @@
 package io.github.talelin.latticy.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.github.talelin.autoconfigure.exception.ForbiddenException;
 import io.github.talelin.autoconfigure.exception.NotFoundException;
 import io.github.talelin.latticy.bo.GroupPermissionBO;
 import io.github.talelin.latticy.common.enumeration.GroupLevelEnum;
+import io.github.talelin.latticy.common.factory.UserManagerFactory;
 import io.github.talelin.latticy.common.mybatis.LinPage;
+import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.admin.*;
 import io.github.talelin.latticy.mapper.GroupPermissionMapper;
 import io.github.talelin.latticy.mapper.UserGroupMapper;
 import io.github.talelin.latticy.model.*;
+import io.github.talelin.latticy.model.course.Student;
 import io.github.talelin.latticy.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.talelin.latticy.service.course.StudentService;
+import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,25 +36,17 @@ import java.util.stream.Collectors;
  * 管理员服务实现类
  */
 @Service
+@AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private UserIdentityService userIdentityService;
-
-    @Autowired
     private GroupService groupService;
-
-    @Autowired
     private PermissionService permissionService;
-
-    @Autowired
     private GroupPermissionMapper groupPermissionMapper;
-
-    @Autowired
     private UserGroupMapper userGroupMapper;
+    private StudentService studentService;
+    private UserManagerFactory userManagerFactory;
 
     @Override
     public IPage<UserDO> getUserPageByGroupId(Integer groupId, Integer count, Integer page) {
@@ -78,12 +77,16 @@ public class AdminServiceImpl implements AdminService {
         if (userService.getRootUserId().equals(id)) {
             throw new ForbiddenException(10079);
         }
-        boolean userRemoved = userService.removeById(id);
         QueryWrapper<UserIdentityDO> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserIdentityDO::getUserId, id);
         // 删除用户，还应当将 user_group表中的数据删除
         boolean deleteResult = userGroupMapper.deleteByUserId(id) > 0;
-        return userRemoved && userIdentityService.remove(wrapper) && deleteResult;
+        boolean userIdentityRemoved = userIdentityService.remove(wrapper);
+        // 删除用户角色关联表数据
+        UserManagerStrategy userStrategy = userManagerFactory.getUserStrategy(userService.getById(id).getRole());
+        boolean relationDeleted = userStrategy.deleteRelation(id);
+        boolean userRemoved = userService.removeById(id);
+        return userRemoved && userIdentityRemoved && deleteResult && relationDeleted;
     }
 
     @Override
@@ -96,9 +99,10 @@ public class AdminServiceImpl implements AdminService {
         }
         List<Integer> existGroupIds = groupService.getUserGroupIdsByUserId(id);
         // 删除existGroupIds有，而newGroupIds没有的
-        List<Integer> deleteIds = existGroupIds.stream().filter(it -> !newGroupIds.contains(it)).collect(Collectors.toList());
+        List<Integer> deleteIds = existGroupIds.stream().filter(it -> !newGroupIds.contains(it)).toList();
         // 添加newGroupIds有，而existGroupIds没有的
-        List<Integer> addIds = newGroupIds.stream().filter(it -> !existGroupIds.contains(it)).collect(Collectors.toList());
+        List<Integer> addIds = newGroupIds.stream().filter(it -> !existGroupIds.contains(it)).toList();
+        updateUserBaseInfo(id, validator);
         return groupService.deleteUserGroupRelations(id, deleteIds) && groupService.addUserGroupRelations(id, addIds);
     }
 
@@ -233,4 +237,33 @@ public class AdminServiceImpl implements AdminService {
             throw new ForbiddenException(10072);
         }
     }
+
+    private void updateUserBaseInfo(Integer id, UpdateUserInfoDTO validator) {
+        if (validateUpdateUserBaseInfo(validator)) {
+            return;
+        }
+        UserDO user = UserDO.builder()
+                .age(validator.getAge())
+                .gender(CommonUtil.getGenderName(validator.getGender()))
+                .remark(validator.getRemark())
+                .grade(CommonUtil.getGradeName(validator.getGrade()))
+                .build();
+        LambdaUpdateWrapper<UserDO> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(UserDO::getId, id);
+        userService.update(user, updateWrapper);
+        if (!ObjectUtils.isEmpty(validator.getGrade())) {
+            Student student = Student.builder().grade(CommonUtil.getGradeName(validator.getGrade())).build();
+            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda().eq(Student::getUserId, id);
+            studentService.update(student, queryWrapper);
+        }
+    }
+
+    private boolean validateUpdateUserBaseInfo(UpdateUserInfoDTO userInfoDTO) {
+        return ObjectUtils.isEmpty(userInfoDTO.getAge()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getGrade()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getGender()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getRemark());
+    }
+
 }

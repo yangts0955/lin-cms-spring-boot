@@ -5,9 +5,7 @@ import io.github.talelin.latticy.bo.FileBO;
 import io.github.talelin.latticy.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -37,5 +35,11 @@ public class FileController {
         MultiValueMap<String, MultipartFile> fileMap =
                 multipartHttpServletRequest.getMultiFileMap();
         return fileService.upload(fileMap);
+    }
+
+    @GetMapping("{fileName}")
+    @LoginRequired
+    public FileBO getFile(@PathVariable String fileName) {
+        return fileService.getFile(fileName);
     }
 }

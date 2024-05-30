@@ -1,7 +1,7 @@
 package io.github.talelin.latticy.mapper;
 
-import io.github.talelin.latticy.model.FileDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.github.talelin.latticy.model.FileDO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +25,6 @@ public interface FileMapper extends BaseMapper<FileDO> {
      * @return 文件数据传输对象
      */
     int selectCountByMd5(@Param("md5") String md5);
+
+    FileDO selectByFileName(@Param("fileName") String fileName);
 }

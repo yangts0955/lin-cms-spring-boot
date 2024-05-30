@@ -13,7 +13,11 @@ import io.github.talelin.latticy.model.PermissionDO;
 import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.service.AdminService;
 import io.github.talelin.latticy.service.GroupService;
-import io.github.talelin.latticy.vo.*;
+import io.github.talelin.latticy.vo.CreatedVO;
+import io.github.talelin.latticy.vo.DeletedVO;
+import io.github.talelin.latticy.vo.PageResponseVO;
+import io.github.talelin.latticy.vo.UpdatedVO;
+import io.github.talelin.latticy.vo.course.UserInfoAdminVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +54,12 @@ public class AdminController {
     @AdminRequired
     @GetMapping("/users")
     @PermissionMeta(value = "查询所有用户", mount = false)
-    public PageResponseVO<UserInfoVO> getUsers(
+    public PageResponseVO<UserInfoAdminVO> getUsers(
             @Validated QueryUsersDTO dto) {
         IPage<UserDO> iPage = adminService.getUserPageByGroupId(dto.getGroupId(), dto.getCount(), dto.getPage());
-        List<UserInfoVO> userInfos = iPage.getRecords().stream().map(user -> {
+        List<UserInfoAdminVO> userInfos = iPage.getRecords().stream().map(user -> {
             List<GroupDO> groups = groupService.getUserGroupsByUserId(user.getId());
-            return new UserInfoVO(user, groups);
+            return new UserInfoAdminVO(user, groups);
         }).collect(Collectors.toList());
         return PageUtil.build(iPage, userInfos);
     }
@@ -76,7 +80,7 @@ public class AdminController {
         return new DeletedVO(5);
     }
 
-    @AdminRequired
+    //    @AdminRequired
     @PutMapping("/user/{id}")
     @PermissionMeta(value = "管理员更新用户信息", mount = false)
     public UpdatedVO updateUser(@PathVariable @Positive(message = "{id.positive}") Integer id, @RequestBody @Validated UpdateUserInfoDTO validator) {

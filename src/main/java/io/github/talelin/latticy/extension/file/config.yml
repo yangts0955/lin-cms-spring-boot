@@ -3,7 +3,7 @@
 lin:
   file:
     # 文件服务域名
-    domain: http://localhost:5000/
+    domain: http://file.dragonflyedu.cn/
     # 排除文件类型
     exclude:
     # 包括文件类型
@@ -19,6 +19,10 @@ lin:
     single-limit: 2MB
     # 本地文件保存位置
     store-dir: assets/
+    qiniuyun:
+      access-key: Pqj9YMJ553UGBL1GfluyFS3bNliD95y1w7XJGZsE
+      secret-key: c-PUffCvoH-IBAH0XINee6tPf6Gb04jtbwBT3N4o
+      bucket: dragonfly-cms
 spring:
   servlet:
     multipart:

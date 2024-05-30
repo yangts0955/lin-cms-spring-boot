@@ -41,7 +41,7 @@ public class QiniuUploader extends AbstractUploader {
     private String upToken;
 
     public void initUploadManager() {
-        Configuration cfg = new Configuration(Region.region2());
+        Configuration cfg = new Configuration(Region.regionAs0());
         uploadManager = new UploadManager(cfg);
         Auth auth = Auth.create(accessKey, secretKey);
         upToken = auth.uploadToken(bucket);

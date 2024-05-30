@@ -1,5 +1,6 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 -- ----------------------------
 -- 文件表
@@ -112,6 +113,11 @@ CREATE TABLE lin_user
     nickname    varchar(24)               DEFAULT NULL COMMENT '用户昵称',
     avatar      varchar(500)              DEFAULT NULL COMMENT '头像url',
     email       varchar(100)              DEFAULT NULL COMMENT '邮箱',
+    age         int(10)                   DEFAULT NULL COMMENT '年龄',
+    gender      varchar(24)      NOT NULL DEFAULT 'UNKNOWN' COMMENT '性别',
+    role        varchar(24)      NOT NULL DEFAULT 'GUEST' COMMENT '身份',
+    grade       varchar(20)               DEFAULT NULL COMMENT '年级',
+    remark      varchar(2560)             DEFAULT NULL COMMENT '备注',
     create_time datetime(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     update_time datetime(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
     delete_time datetime(3)               DEFAULT NULL,
@@ -184,6 +190,210 @@ CREATE TABLE book
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci;
 
+  -- ----------------------------
+  -- 学生表
+  -- ----------------------------
+  DROP TABLE IF EXISTS t_student;
+  CREATE TABLE t_student
+  (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      grade       varchar(20)     DEFAULT NULL   COMMENT '年级',
+      parent_id   int(10),
+      user_id     int(10)         NOT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+  ) ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+  -- ----------------------------
+  -- 老师表
+  -- ----------------------------
+  DROP TABLE IF EXISTS t_teacher;
+  CREATE TABLE t_teacher
+  (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      user_id     int(10)         NOT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+  ) ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_general_ci;
+
+    -- ----------------------------
+    -- 运营表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_operator;
+    CREATE TABLE t_operator
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      user_id     int(10)         NOT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+    -- ----------------------------
+    -- 家长表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_parent;
+    CREATE TABLE t_parent
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      student_id  int(10),
+      user_id     int(10)         NOT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+    -- ----------------------------
+    -- 课程表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_course;
+    CREATE TABLE t_course
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      name        varchar(32)     DEFAULT NULL,
+      subject     varchar(32)     DEFAULT NULL,
+      grade       varchar(32)     DEFAULT NULL,
+      profit      decimal         DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+    -- ----------------------------
+    -- 日程表
+    -- ----------------------------
+  DROP TABLE IF EXISTS t_schedule;
+    CREATE TABLE t_schedule
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      course_id   int(11)         NOT NULL,
+      course_date date            DEFAULT NULL,
+      start_time  time            DEFAULT NULL,
+      end_time    time            DEFAULT NULL,
+      duration    bigint          DEFAULT 0,
+      status      varchar(20)     DEFAULT NULL,
+      remark      varchar(2560)   DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+    -- ----------------------------
+    -- teacher_schedule表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_schedule_teacher;
+    CREATE TABLE t_schedule_teacher
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      schedule_id int(11)         NOT NULL,
+      teacher_id  int(11)         NOT NULL,
+      salary      decimal         DEFAULT 0,
+      summary     varchar(500)    DEFAULT NULL,
+      is_present  tinyint(1)      DEFAULT 0,
+      remark      varchar(2560)   DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+   -- ----------------------------
+    -- student_schedule表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_schedule_student;
+    CREATE TABLE t_schedule_student
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      schedule_id int(11)         NOT NULL,
+      student_id  int(11)         NOT NULL,
+      earning     decimal         DEFAULT 0,
+      is_present  tinyint(1)      DEFAULT 0,
+      self_summary varchar(500)   DEFAULT NULL,
+      teacher_evolution varchar(500) DEFAULT NULL,
+      remark      varchar(2560)   DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+   -- ----------------------------
+    -- accounting_summary表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_accounting_summary;
+    CREATE TABLE t_accounting_summary
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      schedule_id int(11)         NOT NULL,
+      profit      decimal         DEFAULT 0,
+      remark      varchar(2560)   DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+   -- ----------------------------
+    -- course_summary表
+    -- ----------------------------
+    DROP TABLE IF EXISTS t_course_summary;
+    CREATE TABLE t_course_summary
+    (
+      id          int(11)         NOT NULL AUTO_INCREMENT,
+      schedule_id int(11)         NOT NULL,
+      theme       varchar(30)     DEFAULT NULL,
+      target      varchar(500)    DEFAULT NULL,
+      description varchar(2560)   DEFAULT NULL,
+      course_file_id int(11)      DEFAULT NULL,
+      status      varchar(20)     DEFAULT NULL,
+      remark      varchar(2560)   DEFAULT NULL,
+      create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+      update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      delete_time datetime(3)          DEFAULT NULL,
+      is_deleted  tinyint(1)           DEFAULT 0,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB
+      DEFAULT CHARSET = utf8mb4
+      COLLATE = utf8mb4_general_ci;
+
+
+
+
 INSERT INTO book(`title`, `author`, `summary`, `image`) VALUES ('深入理解计算机系统', 'Randal E.Bryant', '从程序员的视角，看计算机系统！\n本书适用于那些想要写出更快、更可靠程序的程序员。通过掌握程序是如何映射到系统上，以及程序是如何执行的，读者能够更好的理解程序的行为为什么是这样的，以及效率低下是如何造成的。', 'https://img3.doubanio.com/lpic/s1470003.jpg');
 INSERT INTO book(`title`, `author`, `summary`, `image`) VALUES ('C程序设计语言', '（美）Brian W. Kernighan', '在计算机发展的历史上，没有哪一种程序设计语言像C语言这样应用广泛。本书原著即为C语言的设计者之一Dennis M.Ritchie和著名计算机科学家Brian W.Kernighan合著的一本介绍C语言的权威经典著作。', 'https://img3.doubanio.com/lpic/s1106934.jpg');
 
@@ -193,8 +403,8 @@ INSERT INTO book(`title`, `author`, `summary`, `image`) VALUES ('C程序设计�
 -- ----------------------------
 BEGIN;
 
-INSERT INTO lin_user(id, username, nickname)
-VALUES (1, 'root', 'root');
+INSERT INTO lin_user(id, username, nickname, role, remark)
+VALUES (1, 'root', 'root', 'ADMIN', 'root account');
 
 INSERT INTO lin_user_identity (id, user_id, identity_type, identifier, credential)
 VALUES (1, 1, 'USERNAME_PASSWORD', 'root',
@@ -204,7 +414,19 @@ INSERT INTO lin_group(id, name, info, level)
 VALUES (1, 'root', '超级用户组', 1);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (2, 'guest', '游客组', 2);
+VALUES (5, 'operator', '运营组', 2);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (2, 'teacher', '教师组', 3);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (4, 'parent', '家长组', 4);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (3, 'student', '学生组', 5);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (6, 'guest', '游客组', 6);
 
 INSERT INTO lin_user_group(id, user_id, group_id)
 VALUES (1, 1, 1);

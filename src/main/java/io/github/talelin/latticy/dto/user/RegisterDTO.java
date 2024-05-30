@@ -1,12 +1,15 @@
 package io.github.talelin.latticy.dto.user;
 
 import io.github.talelin.autoconfigure.validator.EqualField;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
@@ -17,6 +20,8 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @EqualField(srcField = "password", dstField = "confirmPassword", message = "{password.equal-field}")
 public class RegisterDTO {
 
@@ -35,4 +40,13 @@ public class RegisterDTO {
 
     @NotBlank(message = "{password.confirm.not-blank}")
     private String confirmPassword;
+
+    @NotNull(message = "{role.not-null}")
+    private String role;
+
+    private Integer age;
+    private String gender;
+    private String remark;
+    private String grade;
+    private String realName;
 }

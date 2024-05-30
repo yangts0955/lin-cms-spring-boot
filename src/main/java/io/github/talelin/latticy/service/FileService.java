@@ -1,8 +1,8 @@
 package io.github.talelin.latticy.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import io.github.talelin.latticy.bo.FileBO;
 import io.github.talelin.latticy.model.FileDO;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,4 +29,6 @@ public interface FileService extends IService<FileDO> {
      * @return true 表示已存在
      */
     boolean checkFileExistByMd5(String md5);
+
+    FileBO getFile(String fileName);
 }

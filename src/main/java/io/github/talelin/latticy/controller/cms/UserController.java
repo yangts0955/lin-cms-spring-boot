@@ -2,14 +2,16 @@ package io.github.talelin.latticy.controller.cms;
 
 import io.github.talelin.autoconfigure.exception.NotFoundException;
 import io.github.talelin.autoconfigure.exception.ParameterException;
-import io.github.talelin.core.annotation.AdminRequired;
 import io.github.talelin.core.annotation.LoginRequired;
+import io.github.talelin.core.annotation.PermissionMeta;
 import io.github.talelin.core.annotation.PermissionModule;
 import io.github.talelin.core.annotation.RefreshRequired;
 import io.github.talelin.core.token.DoubleJWT;
 import io.github.talelin.core.token.Tokens;
 import io.github.talelin.latticy.common.LocalUser;
 import io.github.talelin.latticy.common.configuration.LoginCaptchaProperties;
+import io.github.talelin.latticy.common.factory.UserManagerFactory;
+import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.user.ChangePasswordDTO;
 import io.github.talelin.latticy.dto.user.LoginDTO;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
@@ -19,21 +21,12 @@ import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.service.GroupService;
 import io.github.talelin.latticy.service.UserIdentityService;
 import io.github.talelin.latticy.service.UserService;
-import io.github.talelin.latticy.vo.CreatedVO;
-import io.github.talelin.latticy.vo.LoginCaptchaVO;
-import io.github.talelin.latticy.vo.UpdatedVO;
-import io.github.talelin.latticy.vo.UserInfoVO;
-import io.github.talelin.latticy.vo.UserPermissionVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
+import io.github.talelin.latticy.vo.*;
+import lombok.AllArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -47,30 +40,25 @@ import java.util.Map;
 @RequestMapping("/cms/user")
 @PermissionModule(value = "用户")
 @Validated
+@AllArgsConstructor
 public class UserController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private GroupService groupService;
-
-    @Autowired
     private UserIdentityService userIdentityService;
-
-    @Autowired
     private DoubleJWT jwt;
-
-    @Autowired
     private LoginCaptchaProperties captchaConfig;
+    private UserManagerFactory userManagerFactory;
 
     /**
      * 用户注册
      */
     @PostMapping("/register")
-    @AdminRequired
-    public CreatedVO register(@RequestBody @Validated RegisterDTO validator) {
-        userService.createUser(validator);
+//    @GroupRequired
+    @PermissionMeta("注册用户")
+    public CreatedVO register(@RequestBody @Validated RegisterDTO registerDTO) {
+        UserManagerStrategy strategy = userManagerFactory.getUserStrategy(CommonUtil.getRoleName(registerDTO.getRole()));
+        strategy.register(registerDTO);
         return new CreatedVO(11);
     }
 
@@ -156,8 +144,8 @@ public class UserController {
     /**
      * 查询自己信息
      */
-    @LoginRequired
     @GetMapping("/information")
+    @LoginRequired
     public UserInfoVO getInformation() {
         UserDO user = LocalUser.getLocalUser();
         List<GroupDO> groups = groupService.getUserGroupsByUserId(user.getId());
