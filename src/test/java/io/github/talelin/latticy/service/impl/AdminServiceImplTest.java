@@ -10,6 +10,8 @@ import io.github.talelin.latticy.dto.admin.*;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.mapper.*;
 import io.github.talelin.latticy.model.*;
+import io.github.talelin.latticy.model.enums.GenderEnum;
+import io.github.talelin.latticy.model.enums.RoleEnum;
 import io.github.talelin.latticy.service.GroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

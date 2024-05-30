@@ -105,6 +105,9 @@ CREATE TABLE lin_group_permission
 -- ----------------------------
 -- 用户基本信息表
 -- ----------------------------
+-- ----------------------------
+-- 用户基本信息表
+-- ----------------------------
 DROP TABLE IF EXISTS lin_user;
 CREATE TABLE lin_user
 (
@@ -113,6 +116,11 @@ CREATE TABLE lin_user
     nickname    varchar(24)               DEFAULT NULL COMMENT '用户昵称',
     avatar      varchar(500)              DEFAULT NULL COMMENT '头像url',
     email       varchar(100)              DEFAULT NULL COMMENT '邮箱',
+    age         int(10)                   DEFAULT NULL COMMENT '年龄',
+    gender      varchar(24)      NOT NULL DEFAULT 'UNKNOWN' COMMENT '性别',
+    role        varchar(24)      NOT NULL DEFAULT 'GUEST' COMMENT '身份',
+    grade       varchar(20)               DEFAULT NULL COMMENT '年级',
+    remark      varchar(2560)             DEFAULT NULL COMMENT '备注',
     create_time datetime(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     update_time datetime(3)      NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
     delete_time datetime(3)               DEFAULT NULL,
@@ -152,3 +160,30 @@ CREATE TABLE lin_user_group
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
+INSERT INTO lin_user(id, username, nickname, role, remark)
+VALUES (1, 'root', 'root', 'ADMIN', 'root account');
+
+INSERT INTO lin_user_identity (id, user_id, identity_type, identifier, credential)
+VALUES (1, 1, 'USERNAME_PASSWORD', 'root',
+        'pbkdf2sha256:64000:18:24:n:yUnDokcNRbwILZllmUOItIyo9MnI00QW:6ZcPf+sfzyoygOU8h/GSoirF');
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (1, 'root', '超级用户组', 1);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (5, 'operator', '运营组', 2);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (2, 'teacher', '教师组', 3);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (4, 'parent', '家长组', 4);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (3, 'student', '学生组', 5);
+
+INSERT INTO lin_group(id, name, info, level)
+VALUES (6, 'guest', '游客组', 6);
+
+INSERT INTO lin_user_group(id, user_id, group_id)
+VALUES (1, 1, 1);

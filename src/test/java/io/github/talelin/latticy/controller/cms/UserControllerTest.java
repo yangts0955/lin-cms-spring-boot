@@ -67,6 +67,9 @@ public class UserControllerTest {
         dto.setConfirmPassword(password);
         dto.setPassword(password);
         dto.setUsername(username);
+        dto.setGender("MAN");
+        dto.setGrade("SENIOR_ONE");
+        dto.setRole("GUEST");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
@@ -92,6 +95,9 @@ public class UserControllerTest {
         dto.setConfirmPassword(password);
         dto.setPassword(password);
         dto.setUsername(username);
+        dto.setGender("MAN");
+        dto.setGrade("SENIOR_ONE");
+        dto.setRole("GUEST");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);

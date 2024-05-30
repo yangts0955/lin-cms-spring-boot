@@ -8,11 +8,15 @@ server:
 spring:
   # 数据源配置，请修改为你项目的实际配置
   datasource:
-    username: "root"
-    password: "123456"
+    username: ${MYSQL_USER:alice}
+    password: ${MYSQL_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:13306/lin_cms
-
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/lin_cms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF8
+  flyway:
+    enabled: true
+    table: flyway_schema_history
+    baseline-on-migrate: true
+    locations: classpath:db/migration
 
 # 开启权限拦截
 auth:

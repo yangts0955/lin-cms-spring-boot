@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  cms-system:
+    build: .
+    image: cms-system:1.0
+    ports:
+      - "10100:80"
+    environment:
+      - MYSQL_HOST=db_mysql
+    depends_on:
+      db_mysql:
+        condition: service_healthy
+
+    restart: always
+    networks:
+      cms-system:
+  db_mysql:
+    image: mysql:latest
+    ports:
+      - "13306:3306"
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_DATABASE=lin_cms
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u ${MYSQL_USER} --password=${MYSQL_PASSWORD}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      cms-system:
+networks:
+  cms-system:
