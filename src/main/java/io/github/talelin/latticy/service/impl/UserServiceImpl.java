@@ -1,5 +1,7 @@
 package io.github.talelin.latticy.service.impl;
 
+import static io.github.talelin.latticy.common.util.CommonUtil.calculateEntranceDate;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +26,7 @@ import io.github.talelin.latticy.model.GroupDO;
 import io.github.talelin.latticy.model.PermissionDO;
 import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.model.UserGroupDO;
+import io.github.talelin.latticy.model.enums.GradeEnum;
 import io.github.talelin.latticy.service.GroupService;
 import io.github.talelin.latticy.service.PermissionService;
 import io.github.talelin.latticy.service.UserIdentityService;
@@ -41,7 +44,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author pedro@TaleLin
@@ -87,8 +89,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         UserDO user = new UserDO();
         BeanUtils.copyProperties(dto, user);
         user.setGender(CommonUtil.getGenderName(dto.getGender()));
-        user.setGrade(CommonUtil.getGradeName(dto.getGrade()));
+        GradeEnum grade = CommonUtil.getGradeName(dto.getGrade());
+        user.setGrade(grade);
         user.setRole(CommonUtil.getRoleName(dto.getRole()));
+        user.setEntranceDate(calculateEntranceDate(grade));
         this.baseMapper.insert(user);
 
         if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
@@ -97,7 +101,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             List<UserGroupDO> relations = dto.getGroupIds()
                     .stream()
                     .map(groupId -> new UserGroupDO(user.getId(), groupId))
-                    .collect(Collectors.toList());
+                    .toList();
             userGroupMapper.insertBatch(relations);
         } else {
             // id为2的分组为游客分组

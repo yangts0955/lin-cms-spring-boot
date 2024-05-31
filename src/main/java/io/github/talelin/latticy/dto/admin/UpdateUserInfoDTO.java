@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -17,8 +18,11 @@ public class UpdateUserInfoDTO {
     @NotEmpty(message = "{group.ids.not-empty}")
     private List<@Min(1) Integer> groupIds;
 
-    private Integer age;
     private String gender;
     private String grade;
+    private LocalDate birthday;
+    private String realName;
+    private String phoneNumber;
+    private String wxNumber;
     private String remark;
 }

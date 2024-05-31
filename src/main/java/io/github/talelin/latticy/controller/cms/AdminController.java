@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 管理员控制器
@@ -51,16 +50,16 @@ public class AdminController {
         return adminService.getAllStructuralPermissions();
     }
 
-    @AdminRequired
     @GetMapping("/users")
-    @PermissionMeta(value = "查询所有用户", mount = false)
+//    @AdminRequired
+//    @PermissionMeta(value = "查询所有用户", mount = false)
     public PageResponseVO<UserInfoAdminVO> getUsers(
             @Validated QueryUsersDTO dto) {
         IPage<UserDO> iPage = adminService.getUserPageByGroupId(dto.getGroupId(), dto.getCount(), dto.getPage());
         List<UserInfoAdminVO> userInfos = iPage.getRecords().stream().map(user -> {
             List<GroupDO> groups = groupService.getUserGroupsByUserId(user.getId());
             return new UserInfoAdminVO(user, groups);
-        }).collect(Collectors.toList());
+        }).toList();
         return PageUtil.build(iPage, userInfos);
     }
 
@@ -80,9 +79,9 @@ public class AdminController {
         return new DeletedVO(5);
     }
 
-    //    @AdminRequired
     @PutMapping("/user/{id}")
-    @PermissionMeta(value = "管理员更新用户信息", mount = false)
+//    @AdminRequired
+//    @PermissionMeta(value = "管理员更新用户信息", mount = false)
     public UpdatedVO updateUser(@PathVariable @Positive(message = "{id.positive}") Integer id, @RequestBody @Validated UpdateUserInfoDTO validator) {
         adminService.updateUserInfo(id, validator);
         return new UpdatedVO(6);

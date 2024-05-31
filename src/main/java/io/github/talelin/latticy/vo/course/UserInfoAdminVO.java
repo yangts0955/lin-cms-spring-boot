@@ -1,5 +1,8 @@
 package io.github.talelin.latticy.vo.course;
 
+import static io.github.talelin.latticy.common.util.CommonUtil.calculateAge;
+import static io.github.talelin.latticy.common.util.CommonUtil.calculateGrade;
+
 import io.github.talelin.latticy.model.GroupDO;
 import io.github.talelin.latticy.model.UserDO;
 import lombok.AllArgsConstructor;
@@ -52,9 +55,19 @@ public class UserInfoAdminVO {
 
     private String grade;
 
+    private String realName;
+
+    private String phoneNumber;
+
+    private String wxNumber;
+
+
     public UserInfoAdminVO(UserDO user, List<GroupDO> groups) {
         BeanUtils.copyProperties(user, this);
         this.groups = groups;
+        this.age = calculateAge(user.getBirthday());
+        this.grade = calculateGrade(user.getEntranceDate(), user.getGradeSignal(), user.getGrade()).name();
+        this.gender = user.getGender().name();
+        this.role = user.getRole().name();
     }
-
 }

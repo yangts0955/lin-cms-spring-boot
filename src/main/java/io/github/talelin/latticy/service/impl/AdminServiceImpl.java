@@ -1,5 +1,7 @@
 package io.github.talelin.latticy.service.impl;
 
+import static io.github.talelin.latticy.common.util.CommonUtil.calculateGradeSignal;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,6 +17,7 @@ import io.github.talelin.latticy.mapper.GroupPermissionMapper;
 import io.github.talelin.latticy.mapper.UserGroupMapper;
 import io.github.talelin.latticy.model.*;
 import io.github.talelin.latticy.model.course.Student;
+import io.github.talelin.latticy.model.enums.GradeEnum;
 import io.github.talelin.latticy.service.*;
 import io.github.talelin.latticy.service.course.StudentService;
 import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
@@ -242,11 +245,17 @@ public class AdminServiceImpl implements AdminService {
         if (validateUpdateUserBaseInfo(validator)) {
             return;
         }
+        UserDO userDO = userService.getById(id);
+        GradeEnum newGrade = CommonUtil.getGradeName(validator.getGrade());
         UserDO user = UserDO.builder()
-                .age(validator.getAge())
                 .gender(CommonUtil.getGenderName(validator.getGender()))
+                .grade(newGrade)
+                .birthday(validator.getBirthday())
+                .realName(validator.getRealName())
+                .phoneNumber(validator.getPhoneNumber())
+                .wxNumber(validator.getWxNumber())
+                .gradeSignal(calculateGradeSignal(userDO.getEntranceDate(), userDO.getGrade(), newGrade, userDO.getGradeSignal()))
                 .remark(validator.getRemark())
-                .grade(CommonUtil.getGradeName(validator.getGrade()))
                 .build();
         LambdaUpdateWrapper<UserDO> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(UserDO::getId, id);
@@ -260,9 +269,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private boolean validateUpdateUserBaseInfo(UpdateUserInfoDTO userInfoDTO) {
-        return ObjectUtils.isEmpty(userInfoDTO.getAge()) &&
-                ObjectUtils.isEmpty(userInfoDTO.getGrade()) &&
+        return ObjectUtils.isEmpty(userInfoDTO.getGrade()) &&
                 ObjectUtils.isEmpty(userInfoDTO.getGender()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getBirthday()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getRealName()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getPhoneNumber()) &&
+                ObjectUtils.isEmpty(userInfoDTO.getWxNumber()) &&
                 ObjectUtils.isEmpty(userInfoDTO.getRemark());
     }
 

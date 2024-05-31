@@ -11,6 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -44,9 +45,19 @@ public class RegisterDTO {
     @NotNull(message = "{role.not-null}")
     private String role;
 
-    private Integer age;
     private String gender;
     private String remark;
+
+    @NotNull(message = "年级不能为空")
     private String grade;
+
+    @NotNull(message = "姓名不能为空")
     private String realName;
+
+    @NotNull(message = "出生日期不能为空")
+    private LocalDate birthday;
+
+    private String phoneNumber;
+
+    private String wxNumber;
 }

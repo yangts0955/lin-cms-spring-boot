@@ -2,6 +2,7 @@ package io.github.talelin.latticy.service.course.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.github.talelin.latticy.common.util.BeanCopyUtil;
 import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.course.PostCourseDTO;
 import io.github.talelin.latticy.dto.course.PostCourseDTO.CourseDateTime;
@@ -47,7 +48,8 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     @Override
     public void updateCourse(Integer courseId, PutCourseDTO courseDTO) {
-        Course course = buildCourse(courseDTO.getName(), courseDTO.getSubject(), courseDTO.getGrade());
+        Course course = this.baseMapper.selectById(courseId);
+        BeanCopyUtil.copyNonNullProperties(courseDTO, course);
         UpdateWrapper<Course> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().eq(Course::getId, courseId);
         this.baseMapper.update(course, updateWrapper);

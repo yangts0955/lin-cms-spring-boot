@@ -5,7 +5,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -45,5 +47,43 @@ public final class CommonUtil {
         long hours = duration / 3_600_000;
         long minutes = (duration % 3_600_000) / 60000;
         return hours + "小时" + minutes + "分钟";
+    }
+
+    public static Integer calculateGradeSignal(LocalDate entranceDate, GradeEnum originalGrade, GradeEnum newGrade, Integer originalGradeSignal) {
+        GradeEnum calGrade = calculateGrade(entranceDate, originalGradeSignal, originalGrade);
+        if (ObjectUtils.nullSafeEquals(calGrade, newGrade)) {
+            return originalGradeSignal;
+        }
+        Integer bias = newGrade.ordinal() - calGrade.ordinal();
+        return originalGradeSignal + bias;
+    }
+
+    public static Integer calculateAge(LocalDate birthday) {
+        return Period.between(birthday, LocalDate.now()).getYears();
+    }
+
+    public static GradeEnum calculateGrade(LocalDate entranceDate, Integer gradeSignal, GradeEnum originalGrade) {
+        if (ObjectUtils.isEmpty(entranceDate)) {
+            if (!ObjectUtils.isEmpty(originalGrade)) {
+                return originalGrade;
+            }
+            return GradeEnum.getDefault();
+        }
+        Integer gradeNumber = Period.between(entranceDate, LocalDate.now()).getYears() + gradeSignal;
+        return GradeEnum.fromSchoolYear(gradeNumber);
+    }
+
+
+    public static LocalDate calculateEntranceDate(GradeEnum gradeEnum) {
+        // judge if student level up by July 1st
+        if (gradeEnum.isLevelUp()) {
+            LocalDate now = LocalDate.now();
+            Integer minusYear = gradeEnum.getSchoolYear();
+            if (now.getMonthValue() < 7) {
+                minusYear++;
+            }
+            return now.minusYears(minusYear).withMonth(7).withDayOfMonth(1);
+        }
+        return null;
     }
 }

@@ -8,6 +8,7 @@ import io.github.talelin.latticy.model.enums.RoleEnum;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * @author pedro@TaleLin
@@ -44,8 +45,6 @@ public class UserDO extends BaseModel implements Serializable {
      */
     private String email;
 
-    private Integer age;
-
     @TableField(value = "`gender`")
     private GenderEnum gender;
 
@@ -56,5 +55,11 @@ public class UserDO extends BaseModel implements Serializable {
 
     @TableField(value = "`grade`")
     private GradeEnum grade;
+    private Integer gradeSignal;
 
+    private LocalDate birthday;
+    private LocalDate entranceDate;
+    private String realName;
+    private String phoneNumber;
+    private String wxNumber;
 }
