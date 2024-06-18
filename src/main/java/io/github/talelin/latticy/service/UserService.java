@@ -10,8 +10,9 @@ import io.github.talelin.latticy.model.GroupDO;
 import io.github.talelin.latticy.model.PermissionDO;
 import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.vo.LoginCaptchaVO;
+import io.github.talelin.latticy.vo.course.EnumVO;
 
-import java.awt.*;
+import java.awt.FontFormatException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -150,4 +151,6 @@ public interface UserService extends IService<UserDO> {
      * @return 结果
      */
     boolean verifyCaptcha(String captcha, String tag);
+
+    EnumVO getEnums(Integer type);
 }

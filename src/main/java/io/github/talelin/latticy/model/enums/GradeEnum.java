@@ -23,7 +23,7 @@ public enum GradeEnum implements IEnum<String> {
     SENIOR_TWO(11),
     SENIOR_THREE(12),
     SENIOR_HIGH(-1),
-    UNDERGRADUATE(13),
+    UNDERGRADUATE(-1),
     POSTGRADUATE_PREPARATION(-1),
     PUBLIC_SERVANT_PREPARATION(-1),
     OTHER(-1);

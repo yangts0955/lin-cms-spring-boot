@@ -116,7 +116,7 @@ CREATE TABLE lin_user
     age         int(10)                   DEFAULT NULL COMMENT '年龄',
     gender      varchar(24)      NOT NULL DEFAULT 'UNKNOWN' COMMENT '性别',
     role        varchar(24)      NOT NULL DEFAULT 'GUEST' COMMENT '身份',
-    grade       varchar(20)               DEFAULT NULL COMMENT '年级',
+    grade       varchar(50)               DEFAULT NULL COMMENT '年级',
     grade_signal int(5)                   DEFAULT 0    COMMENT '年级标识，用于计算留级等特殊情况',
     birthday    date                      DEFAULT NULL COMMENT '生日',
     entrance_date date                    DEFAULT NULL COMMENT '入学时间',
@@ -202,7 +202,7 @@ CREATE TABLE book
   CREATE TABLE t_student
   (
       id          int(11)         NOT NULL AUTO_INCREMENT,
-      grade       varchar(20)     DEFAULT NULL   COMMENT '年级',
+      grade       varchar(50)     DEFAULT NULL   COMMENT '年级',
       parent_id   int(10),
       user_id     int(10)         NOT NULL,
       create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -275,7 +275,7 @@ CREATE TABLE book
       id          int(11)         NOT NULL AUTO_INCREMENT,
       name        varchar(32)     DEFAULT NULL,
       subject     varchar(32)     DEFAULT NULL,
-      grade       varchar(32)     DEFAULT NULL,
+      grade       varchar(50)     DEFAULT NULL,
       profit      decimal         DEFAULT NULL,
       create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
       update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
@@ -419,19 +419,19 @@ INSERT INTO lin_group(id, name, info, level)
 VALUES (1, 'root', '超级用户组', 1);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (5, 'operator', '运营组', 2);
+VALUES (5, 'operator', '运营', 2);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (2, 'teacher', '教师组', 3);
+VALUES (2, 'teacher', '教师', 3);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (4, 'parent', '家长组', 4);
+VALUES (4, 'parent', '家长', 4);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (3, 'student', '学生组', 5);
+VALUES (3, 'student', '学生', 5);
 
 INSERT INTO lin_group(id, name, info, level)
-VALUES (6, 'guest', '游客组', 6);
+VALUES (6, 'guest', '游客', 6);
 
 INSERT INTO lin_user_group(id, user_id, group_id)
 VALUES (1, 1, 1);

@@ -1,5 +1,6 @@
 package io.github.talelin.latticy.dto.admin;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -20,6 +21,7 @@ public class UpdateUserInfoDTO {
 
     private String gender;
     private String grade;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     private String realName;
     private String phoneNumber;

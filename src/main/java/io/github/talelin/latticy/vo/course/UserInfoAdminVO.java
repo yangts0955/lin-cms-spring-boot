@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -60,6 +61,8 @@ public class UserInfoAdminVO {
     private String phoneNumber;
 
     private String wxNumber;
+
+    private LocalDate birthday;
 
 
     public UserInfoAdminVO(UserDO user, List<GroupDO> groups) {

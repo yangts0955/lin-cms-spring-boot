@@ -22,16 +22,20 @@ import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.dto.user.UpdateInfoDTO;
 import io.github.talelin.latticy.mapper.UserGroupMapper;
 import io.github.talelin.latticy.mapper.UserMapper;
+import io.github.talelin.latticy.mapper.course.EnumMapper;
 import io.github.talelin.latticy.model.GroupDO;
 import io.github.talelin.latticy.model.PermissionDO;
 import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.model.UserGroupDO;
+import io.github.talelin.latticy.model.course.EnumDO;
 import io.github.talelin.latticy.model.enums.GradeEnum;
 import io.github.talelin.latticy.service.GroupService;
 import io.github.talelin.latticy.service.PermissionService;
 import io.github.talelin.latticy.service.UserIdentityService;
 import io.github.talelin.latticy.service.UserService;
 import io.github.talelin.latticy.vo.LoginCaptchaVO;
+import io.github.talelin.latticy.vo.course.EnumVO;
+import io.github.talelin.latticy.vo.course.EnumVO.EnumValueVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +69,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Autowired
     private UserGroupMapper userGroupMapper;
+
+    @Autowired
+    private EnumMapper enumMapper;
 
     @Autowired
     private LoginCaptchaProperties captchaConfig;
@@ -240,6 +247,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             log.error(e.getMessage(), e);
             return false;
         }
+    }
+
+    @Override
+    public EnumVO getEnums(Integer type) {
+        EnumVO enumVO = new EnumVO();
+        QueryWrapper<EnumDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(EnumDO::getType, type);
+        List<EnumDO> enums = enumMapper.selectList(queryWrapper);
+        enumVO.setValues(BeanCopyUtil.copyListProperties(enums, EnumValueVO::new));
+        return enumVO;
     }
 
     private void checkGroupsExist(List<Integer> ids) {

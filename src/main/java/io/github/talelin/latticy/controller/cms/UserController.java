@@ -23,6 +23,7 @@ import io.github.talelin.latticy.service.UserIdentityService;
 import io.github.talelin.latticy.service.UserService;
 import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
 import io.github.talelin.latticy.vo.*;
+import io.github.talelin.latticy.vo.course.EnumVO;
 import lombok.AllArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -150,5 +151,10 @@ public class UserController {
         UserDO user = LocalUser.getLocalUser();
         List<GroupDO> groups = groupService.getUserGroupsByUserId(user.getId());
         return new UserInfoVO(user, groups);
+    }
+
+    @GetMapping("/enum/{type}")
+    public EnumVO getEnums(@PathVariable("type") Integer type) {
+        return userService.getEnums(type);
     }
 }

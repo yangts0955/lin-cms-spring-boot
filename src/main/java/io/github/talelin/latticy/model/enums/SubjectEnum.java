@@ -12,10 +12,13 @@ public enum SubjectEnum implements IEnum<String> {
     CHEMISTRY,
     BIOLOGY,
     SCIENCE,
+    POLITICS,
+    HISTORY,
+    GEOGRAPHY,
     IELTS,
     TOEFL,
-    NCE,
-    UNKNOWN; //new concept english
+    NCE, //new concept english
+    UNKNOWN;
 
     @JsonCreator
     public static SubjectEnum fromValue(String value) {

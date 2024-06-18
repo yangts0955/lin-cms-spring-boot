@@ -17,6 +17,8 @@ spring:
     table: flyway_schema_history
     baseline-on-migrate: true
     locations: classpath:db/migration
+  jackson:
+    time-zone: GMT+8
 
 # 开启权限拦截
 auth:

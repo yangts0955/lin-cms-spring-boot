@@ -51,8 +51,8 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-//    @AdminRequired
-//    @PermissionMeta(value = "查询所有用户", mount = false)
+    @AdminRequired
+    @PermissionMeta(value = "查询所有用户", mount = false)
     public PageResponseVO<UserInfoAdminVO> getUsers(
             @Validated QueryUsersDTO dto) {
         IPage<UserDO> iPage = adminService.getUserPageByGroupId(dto.getGroupId(), dto.getCount(), dto.getPage());
@@ -80,8 +80,8 @@ public class AdminController {
     }
 
     @PutMapping("/user/{id}")
-//    @AdminRequired
-//    @PermissionMeta(value = "管理员更新用户信息", mount = false)
+    @AdminRequired
+    @PermissionMeta(value = "管理员更新用户信息", mount = false)
     public UpdatedVO updateUser(@PathVariable @Positive(message = "{id.positive}") Integer id, @RequestBody @Validated UpdateUserInfoDTO validator) {
         adminService.updateUserInfo(id, validator);
         return new UpdatedVO(6);

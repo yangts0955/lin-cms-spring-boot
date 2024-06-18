@@ -59,10 +59,16 @@ public final class CommonUtil {
     }
 
     public static Integer calculateAge(LocalDate birthday) {
+        if (ObjectUtils.isEmpty(birthday)) {
+            return null;
+        }
         return Period.between(birthday, LocalDate.now()).getYears();
     }
 
     public static GradeEnum calculateGrade(LocalDate entranceDate, Integer gradeSignal, GradeEnum originalGrade) {
+        if (!originalGrade.isLevelUp()) {
+            return originalGrade;
+        }
         if (ObjectUtils.isEmpty(entranceDate)) {
             if (!ObjectUtils.isEmpty(originalGrade)) {
                 return originalGrade;

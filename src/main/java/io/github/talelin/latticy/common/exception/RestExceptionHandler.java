@@ -1,5 +1,7 @@
 package io.github.talelin.latticy.common.exception;
 
+import static io.github.talelin.autoconfigure.util.RequestUtil.getSimpleRequest;
+
 import io.github.talelin.autoconfigure.bean.Code;
 import io.github.talelin.autoconfigure.exception.HttpException;
 import io.github.talelin.latticy.common.configuration.CodeMessageConfiguration;
@@ -8,8 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -29,8 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static io.github.talelin.autoconfigure.util.RequestUtil.getSimpleRequest;
 
 /**
  * @author pedro@TaleLin
@@ -266,6 +268,19 @@ public class RestExceptionHandler {
         result.setMessage(Code.INTERNAL_SERVER_ERROR.getZhDescription());
         result.setCode(Code.INTERNAL_SERVER_ERROR.getCode());
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return result;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public UnifyResponseVO<String> processException(DataIntegrityViolationException exception,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) {
+        log.error("", exception);
+        UnifyResponseVO<String> result = new UnifyResponseVO<>();
+        result.setRequest(getSimpleRequest(request));
+        result.setMessage(ObjectUtils.isEmpty(exception.getCause()) ? exception.getMessage() : exception.getCause().getMessage());
+        result.setCode(Code.PARAMETER_ERROR.getCode());
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
         return result;
     }
 

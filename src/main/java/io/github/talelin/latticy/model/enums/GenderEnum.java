@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum GenderEnum implements IEnum<String> {
 
     UNKNOWN,
-    MAN,
-    WOMAN;
+    MALE,
+    FEMALE;
 
     @JsonCreator
     public static GenderEnum fromValue(String value) {
