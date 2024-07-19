@@ -7,6 +7,7 @@ import io.github.talelin.latticy.dto.course.PostScheduleDTO;
 import io.github.talelin.latticy.dto.course.PutScheduleDTO;
 import io.github.talelin.latticy.mapper.course.*;
 import io.github.talelin.latticy.model.course.*;
+import io.github.talelin.latticy.model.enums.CourseStatusEnum;
 import io.github.talelin.latticy.service.course.ScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     @Override
     public void deleteScheduleByCourseId(Integer courseId) {
         QueryWrapper<Schedule> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(Schedule::getCourseId, courseId);
+        queryWrapper.lambda().eq(Schedule::getCourseId, courseId)
+                .eq(Schedule::getStatus, CourseStatusEnum.TO_START);
         List<Schedule> schedules = this.baseMapper.selectList(queryWrapper);
         this.baseMapper.delete(queryWrapper);
 

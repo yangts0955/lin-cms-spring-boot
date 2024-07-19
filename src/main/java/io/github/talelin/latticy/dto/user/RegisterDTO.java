@@ -60,4 +60,6 @@ public class RegisterDTO {
     private String phoneNumber;
 
     private String wxNumber;
+
+    private String subject;
 }

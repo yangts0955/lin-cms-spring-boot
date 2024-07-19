@@ -60,6 +60,18 @@
         tss.student_id = #{studentId} and tc.is_deleted = 0 ;
     </select>
 
+    <select id="queryByCourseId" parameterType="java.lang.Integer" resultMap="courseResultMap">
+        SELECT
+        tc.id,
+        tc.name,
+        tc.subject,
+        tc.grade,
+        tc.profit,
+        tc.remark
+        from t_course tc
+        where tc.id = #{courseId} and tc.is_deleted = 0;
+    </select>
+
     <select id="getSchedulesByCourseId" parameterType="java.lang.Integer" resultMap="scheduleResultMap">
         SELECT *
         FROM t_schedule s

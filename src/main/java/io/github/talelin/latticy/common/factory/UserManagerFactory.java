@@ -17,12 +17,11 @@ public class UserManagerFactory {
 
     public UserManagerStrategy getUserStrategy(RoleEnum role) {
         return switch (role) {
-            case OPERATOR -> operatorManager;
+            case OPERATOR, ROOT -> operatorManager;
             case STUDENT -> studentManager;
             case TEACHER -> teacherManager;
             case GUEST -> guestManager;
             case PARENT -> parentManager;
-            default -> throw new IllegalArgumentException("Invalid identity");
         };
     }
 

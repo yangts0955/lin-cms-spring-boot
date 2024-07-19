@@ -19,7 +19,10 @@ public class CourseVO {
     private Integer courseId;
     private String name;
     private SubjectEnum subject;
+    private String subjectName;
     private GradeEnum grade;
+    private String gradeName;
     private BigDecimal profit;
+    private String remark;
     private List<ScheduleVO> schedules;
 }

@@ -13,4 +13,6 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<CourseVO> queryAllCoursesByTeacherId(Integer teacherId);
 
     List<CourseVO> queryAllCoursesByStudentId(Integer studentId);
+
+    CourseVO queryByCourseId(Integer courseId);
 }

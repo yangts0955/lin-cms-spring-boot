@@ -14,4 +14,5 @@ public class PutCourseDTO {
     private String name;
     private String subject;
     private String grade;
+    private String remark;
 }

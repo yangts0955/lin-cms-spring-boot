@@ -31,7 +31,7 @@ public class TeacherManager implements UserManagerStrategy {
     public void register(RegisterDTO registerDTO) {
         BusinessUtil.assignInnerGroup(registerDTO, InnerGroupEnum.TEACHER);
         UserDO user = userService.createUser(registerDTO);
-        teacherService.save(new Teacher(user.getId()));
+        teacherService.save(new Teacher(user.getId(), CommonUtil.getSubjectName(registerDTO.getSubject())));
     }
 
     @Override

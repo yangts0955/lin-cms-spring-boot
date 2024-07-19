@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.github.talelin.latticy.model.enums.GenderEnum;
 import io.github.talelin.latticy.model.enums.GradeEnum;
 import io.github.talelin.latticy.model.enums.RoleEnum;
+import io.github.talelin.latticy.model.enums.SubjectEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -55,8 +56,11 @@ public class UserDO extends BaseModel implements Serializable {
 
     @TableField(value = "`grade`")
     private GradeEnum grade;
-    private Integer gradeSignal;
 
+    @TableField(value = "`subject`")
+    private SubjectEnum subject;
+
+    private Integer gradeSignal;
     private LocalDate birthday;
     private LocalDate entranceDate;
     private String realName;

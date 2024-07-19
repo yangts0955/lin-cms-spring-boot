@@ -98,6 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         user.setGender(CommonUtil.getGenderName(dto.getGender()));
         GradeEnum grade = CommonUtil.getGradeName(dto.getGrade());
         user.setGrade(grade);
+        user.setSubject(CommonUtil.getSubjectName(dto.getSubject()));
         user.setRole(CommonUtil.getRoleName(dto.getRole()));
         user.setEntranceDate(calculateEntranceDate(grade));
         this.baseMapper.insert(user);

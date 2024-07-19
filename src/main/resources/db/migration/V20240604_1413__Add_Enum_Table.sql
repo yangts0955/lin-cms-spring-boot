@@ -59,4 +59,4 @@ INSERT INTO t_enum_map(id, type, name, value) VALUES (38, 5, 'GEOGRAPHY', '地�
 INSERT INTO t_enum_map(id, type, name, value) VALUES (39, 5, 'IELTS', '雅思');
 INSERT INTO t_enum_map(id, type, name, value) VALUES (40, 5, 'TOEFL', '托福');
 INSERT INTO t_enum_map(id, type, name, value) VALUES (41, 5, 'NCE', '新概念');
-INSERT INTO t_enum_map(id, type, name, value) VALUES (42, 5, 'UNKNOWN', '访客');
+INSERT INTO t_enum_map(id, type, name, value) VALUES (42, 5, 'UNKNOWN', '暂定');

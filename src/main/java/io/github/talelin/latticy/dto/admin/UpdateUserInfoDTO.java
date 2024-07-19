@@ -21,6 +21,7 @@ public class UpdateUserInfoDTO {
 
     private String gender;
     private String grade;
+    private String subject;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     private String realName;

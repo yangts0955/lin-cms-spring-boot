@@ -4,6 +4,7 @@ import static io.github.talelin.latticy.common.util.CommonUtil.calculateGradeSig
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.github.talelin.autoconfigure.exception.ForbiddenException;
 import io.github.talelin.autoconfigure.exception.NotFoundException;
@@ -15,9 +16,12 @@ import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.admin.*;
 import io.github.talelin.latticy.mapper.GroupPermissionMapper;
 import io.github.talelin.latticy.mapper.UserGroupMapper;
+import io.github.talelin.latticy.mapper.course.TeacherMapper;
 import io.github.talelin.latticy.model.*;
 import io.github.talelin.latticy.model.course.Student;
+import io.github.talelin.latticy.model.course.Teacher;
 import io.github.talelin.latticy.model.enums.GradeEnum;
+import io.github.talelin.latticy.model.enums.RoleEnum;
 import io.github.talelin.latticy.service.*;
 import io.github.talelin.latticy.service.course.StudentService;
 import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
@@ -48,6 +52,7 @@ public class AdminServiceImpl implements AdminService {
     private PermissionService permissionService;
     private GroupPermissionMapper groupPermissionMapper;
     private UserGroupMapper userGroupMapper;
+    private TeacherMapper teacherMapper;
     private StudentService studentService;
     private UserManagerFactory userManagerFactory;
 
@@ -250,6 +255,7 @@ public class AdminServiceImpl implements AdminService {
         UserDO user = UserDO.builder()
                 .gender(CommonUtil.getGenderName(validator.getGender()))
                 .grade(newGrade)
+                .subject(CommonUtil.getSubjectName(validator.getSubject()))
                 .birthday(validator.getBirthday())
                 .realName(validator.getRealName())
                 .phoneNumber(validator.getPhoneNumber())
@@ -260,11 +266,19 @@ public class AdminServiceImpl implements AdminService {
         LambdaUpdateWrapper<UserDO> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(UserDO::getId, id);
         userService.update(user, updateWrapper);
-        if (!ObjectUtils.isEmpty(validator.getGrade())) {
-            Student student = Student.builder().grade(CommonUtil.getGradeName(validator.getGrade())).build();
-            QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(Student::getUserId, id);
-            studentService.update(student, queryWrapper);
+        if (!ObjectUtils.isEmpty(validator.getGrade()) && RoleEnum.STUDENT.equals(userDO.getRole())) {
+            UpdateWrapper<Student> wrapper = new UpdateWrapper<>();
+            wrapper.lambda()
+                    .eq(Student::getUserId, id)
+                    .set(Student::getGrade, CommonUtil.getGradeName(validator.getGrade()));
+            studentService.update(null, wrapper);
+        }
+        if (!ObjectUtils.isEmpty(validator.getSubject()) && RoleEnum.TEACHER.equals(userDO.getRole())) {
+            UpdateWrapper<Teacher> wrapper = new UpdateWrapper<>();
+            wrapper.lambda()
+                    .eq(Teacher::getUserId, id)
+                    .set(Teacher::getSubject, CommonUtil.getSubjectName(validator.getSubject()));
+            teacherMapper.update(null, wrapper);
         }
     }
 

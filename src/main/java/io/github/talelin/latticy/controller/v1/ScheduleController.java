@@ -1,6 +1,8 @@
 package io.github.talelin.latticy.controller.v1;
 
 import io.github.talelin.autoconfigure.exception.FailedException;
+import io.github.talelin.core.annotation.GroupRequired;
+import io.github.talelin.core.annotation.PermissionMeta;
 import io.github.talelin.core.annotation.PermissionModule;
 import io.github.talelin.latticy.common.LocalUser;
 import io.github.talelin.latticy.common.factory.UserManagerFactory;
@@ -30,8 +32,8 @@ public class ScheduleController {
     private UserManagerFactory userManagerFactory;
 
     @PostMapping
-//    @GroupRequired
-//    @PermissionMeta(value = "创建日程", module = "日程")
+    @GroupRequired
+    @PermissionMeta(value = "创建日程", module = "日程")
     public CreatedVO createSchedule(@RequestBody PostScheduleDTO scheduleDTO) {
         boolean success = scheduleService.createSchedule(scheduleDTO);
         if (!success) {
@@ -41,24 +43,24 @@ public class ScheduleController {
     }
 
     @DeleteMapping("{id}")
-//    @GroupRequired
-//    @PermissionMeta(value = "删除日程", module = "日程")
+    @GroupRequired
+    @PermissionMeta(value = "删除日程", module = "日程")
     public DeletedVO deleteSchedule(@PathVariable("id") Integer scheduleId) {
         scheduleService.deleteScheduleById(scheduleId);
         return new DeletedVO(3);
     }
 
     @PutMapping("{id}")
-//    @GroupRequired
-//    @PermissionMeta(value = "更新日程", module = "日程")
+    @GroupRequired
+    @PermissionMeta(value = "更新日程", module = "日程")
     public UpdatedVO updateSchedule(@PathVariable("id") Integer scheduleId, @RequestBody PutScheduleDTO scheduleDTO) {
         scheduleService.updateSchedule(scheduleId, scheduleDTO);
         return new UpdatedVO(2);
     }
 
     @GetMapping
-//    @GroupRequired
-//    @PermissionMeta(value = "获取日程", module = "日程")
+    @GroupRequired
+    @PermissionMeta(value = "获取日程", module = "日程")
     public List<ScheduleDetailVO> getSchedules() {
         UserDO user = LocalUser.getLocalUser();
         UserManagerStrategy strategy = userManagerFactory.getUserStrategy(user.getRole());

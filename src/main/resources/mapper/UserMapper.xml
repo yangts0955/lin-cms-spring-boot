@@ -9,11 +9,16 @@
         <result column="nickname" property="nickname"/>
         <result column="avatar" property="avatar"/>
         <result column="email" property="email"/>
-        <result column="age" property="age"/>
         <result column="gender" property="gender"/>
         <result column="remark" property="remark"/>
         <result column="role" property="role"/>
         <result column="grade" property="grade"/>
+        <result column="grade_signal" property="gradeSignal"/>
+        <result column="birthday" property="birthday"/>
+        <result column="entrance_date" property="entranceDate"/>
+        <result column="real_name" property="realName"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="wx_number" property="wxNumber"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="delete_time" property="deleteTime"/>

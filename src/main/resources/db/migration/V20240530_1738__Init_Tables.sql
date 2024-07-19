@@ -117,6 +117,7 @@ CREATE TABLE lin_user
     gender      varchar(24)      NOT NULL DEFAULT 'UNKNOWN' COMMENT '性别',
     role        varchar(24)      NOT NULL DEFAULT 'GUEST' COMMENT '身份',
     grade       varchar(50)               DEFAULT NULL COMMENT '年级',
+    subject     varchar(35)               DEFAULT NULL COMMENT '学科',
     grade_signal int(5)                   DEFAULT 0    COMMENT '年级标识，用于计算留级等特殊情况',
     birthday    date                      DEFAULT NULL COMMENT '生日',
     entrance_date date                    DEFAULT NULL COMMENT '入学时间',
@@ -222,6 +223,7 @@ CREATE TABLE book
   (
       id          int(11)         NOT NULL AUTO_INCREMENT,
       user_id     int(10)         NOT NULL,
+      subject     varchar(32)     DEFAULT NULL,
       create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
       update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
       delete_time datetime(3)          DEFAULT NULL,
@@ -277,6 +279,7 @@ CREATE TABLE book
       subject     varchar(32)     DEFAULT NULL,
       grade       varchar(50)     DEFAULT NULL,
       profit      decimal         DEFAULT NULL,
+      remark      varchar(2560)   DEFAULT NULL,
       create_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
       update_time datetime(3)     NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
       delete_time datetime(3)          DEFAULT NULL,

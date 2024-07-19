@@ -2,7 +2,6 @@ package io.github.talelin.latticy.service.course.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.github.talelin.latticy.common.util.BeanCopyUtil;
 import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.course.PostCourseDTO;
 import io.github.talelin.latticy.dto.course.PostCourseDTO.CourseDateTime;
@@ -13,6 +12,7 @@ import io.github.talelin.latticy.model.course.Course;
 import io.github.talelin.latticy.service.course.BatchScheduleService;
 import io.github.talelin.latticy.service.course.CourseService;
 import io.github.talelin.latticy.service.course.ScheduleService;
+import io.github.talelin.latticy.vo.course.CourseVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     @Transactional
     public boolean createCourse(PostCourseDTO courseDTO) {
-        Course newCourse = buildCourse(courseDTO.getName(), courseDTO.getSubject(), courseDTO.getGrade());
+        Course newCourse = buildCourse(courseDTO.getName(), courseDTO.getSubject(), courseDTO.getGrade(), courseDTO.getRemark());
         boolean courseInsert = this.baseMapper.insert(newCourse) > 0;
         List<PostScheduleDTO> scheduleDTOS = buildPostScheduleDTO(newCourse.getId(), courseDTO);
         boolean batchCreateSchedule = batchScheduleService.batchCreateSchedule(scheduleDTOS);
@@ -49,10 +49,16 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public void updateCourse(Integer courseId, PutCourseDTO courseDTO) {
         Course course = this.baseMapper.selectById(courseId);
-        BeanCopyUtil.copyNonNullProperties(courseDTO, course);
+        course.setGrade(CommonUtil.getGradeName(courseDTO.getGrade()));
+        course.setSubject(CommonUtil.getSubjectName(courseDTO.getSubject()));
         UpdateWrapper<Course> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().eq(Course::getId, courseId);
         this.baseMapper.update(course, updateWrapper);
+    }
+
+    @Override
+    public CourseVO getCourseById(Integer courseId) {
+        return this.baseMapper.queryByCourseId(courseId);
     }
 
     private List<PostScheduleDTO> buildPostScheduleDTO(Integer courseId, PostCourseDTO courseDTO) {
@@ -75,11 +81,12 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         return scheduleDTOS;
     }
 
-    private Course buildCourse(String name, String subject, String grade) {
+    private Course buildCourse(String name, String subject, String grade, String remark) {
         return Course.builder()
                 .name(name)
                 .subject(CommonUtil.getSubjectName(subject))
                 .grade(CommonUtil.getGradeName(grade))
+                .remark(remark)
                 .build();
     }
 

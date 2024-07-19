@@ -1,0 +1,1 @@
+UPDATE lin_user set role = 'ROOT' where lin_user.id = 1

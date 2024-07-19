@@ -37,9 +37,9 @@ request-log:
 logging:
   level:
     # web信息日志记录
-    web: debug
+    web: info
     # SQL日志记录
-    io.github.talelin.latticy.mapper: debug
+    io.github.talelin.latticy.mapper: info
 
 
 

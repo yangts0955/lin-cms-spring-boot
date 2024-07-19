@@ -64,6 +64,8 @@ public class UserInfoAdminVO {
 
     private LocalDate birthday;
 
+    private String subject;
+
 
     public UserInfoAdminVO(UserDO user, List<GroupDO> groups) {
         BeanUtils.copyProperties(user, this);
@@ -72,5 +74,6 @@ public class UserInfoAdminVO {
         this.grade = calculateGrade(user.getEntranceDate(), user.getGradeSignal(), user.getGrade()).name();
         this.gender = user.getGender().name();
         this.role = user.getRole().name();
+        this.subject = user.getSubject().name();
     }
 }

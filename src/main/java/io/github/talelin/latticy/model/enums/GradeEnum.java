@@ -61,4 +61,8 @@ public enum GradeEnum implements IEnum<String> {
     public String getValue() {
         return this.name();
     }
+
+    public int compare(GradeEnum g) {
+        return Math.abs(g.ordinal() - this.ordinal());
+    }
 }

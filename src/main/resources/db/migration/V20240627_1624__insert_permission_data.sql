@@ -1,0 +1,15 @@
+INSERT INTO lin_cms.lin_group_permission (group_id,permission_id) VALUES
+	 (2,6),
+	 (2,12),
+	 (3,6),
+	 (3,12),
+	 (4,6),
+	 (4,12),
+	 (5,6),
+	 (5,7),
+	 (5,8),
+	 (5,9),
+	 (5,10),
+	 (5,11),
+	 (5,12),
+	 (5,13);
