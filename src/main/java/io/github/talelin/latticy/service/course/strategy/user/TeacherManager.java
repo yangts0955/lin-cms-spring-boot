@@ -1,6 +1,7 @@
 package io.github.talelin.latticy.service.course.strategy.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.talelin.autoconfigure.exception.FailedException;
 import io.github.talelin.latticy.common.util.BusinessUtil;
 import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
@@ -9,6 +10,7 @@ import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.model.course.Teacher;
 import io.github.talelin.latticy.model.enums.InnerGroupEnum;
 import io.github.talelin.latticy.service.UserService;
+import io.github.talelin.latticy.service.course.ScheduleService;
 import io.github.talelin.latticy.service.course.TeacherService;
 import io.github.talelin.latticy.vo.course.CourseVO;
 import io.github.talelin.latticy.vo.course.ScheduleDetailVO;
@@ -16,7 +18,7 @@ import io.github.talelin.latticy.vo.course.ScheduleVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class TeacherManager implements UserManagerStrategy {
     private TeacherService teacherService;
     private UserService userService;
     private CourseMapper courseMapper;
+    private ScheduleService scheduleService;
 
     @Override
     public void register(RegisterDTO registerDTO) {
@@ -45,17 +48,7 @@ public class TeacherManager implements UserManagerStrategy {
     public List<CourseVO> getCourses(Integer userId) {
         Integer teacherId = getTeacherIdByUserId(userId);
         List<CourseVO> courses = courseMapper.queryAllCoursesByTeacherId(teacherId);
-        for (CourseVO course : courses) {
-            List<ScheduleVO> scheduleVOS = new ArrayList<>();
-            for (ScheduleVO scheduleVO : course.getSchedules()) {
-                if (scheduleVO.getTeacherId().equals(teacherId)) {
-                    scheduleVO.setDurationStr(CommonUtil.getDurationStr(scheduleVO.getDuration()));
-                    scheduleVOS.add(scheduleVO);
-                }
-            }
-            course.setSchedules(scheduleVOS);
-        }
-        return courses;
+        return setCoursesInfo(courses);
     }
 
     @Override
@@ -67,5 +60,31 @@ public class TeacherManager implements UserManagerStrategy {
         QueryWrapper<Teacher> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Teacher::getUserId, userId);
         return teacherService.getOne(queryWrapper).getId();
+    }
+
+    private List<CourseVO> setCoursesInfo(List<CourseVO> courses) {
+        return courses.stream()
+                .map(courseVO -> {
+                            List<Integer> scheduleIds = courseVO.getSchedules().stream().map(ScheduleVO::getScheduleId).toList();
+                            if (!scheduleService.batchUpdateSchedulesStatus(scheduleIds)) {
+                                throw new FailedException("update schedules status failed");
+                            }
+                            List<ScheduleVO> scheduleVOS = courseVO.getSchedules().stream()
+                                    .map(scheduleVO -> {
+                                        scheduleVO.setDurationStr(CommonUtil.getDurationStr(scheduleVO.getDuration()));
+                                        scheduleVO.setTeacherName(
+                                                userService.getById(scheduleVO.getTeacherId())
+                                                        .getRealName());
+                                        List<String> studentNames = userService.listByIds(scheduleVO.getStudentIds()).stream()
+                                                .map(UserDO::getRealName)
+                                                .toList();
+                                        scheduleVO.setStudentNames(studentNames);
+                                        return scheduleVO;
+                                    })
+                                    .sorted(Comparator.comparing((ScheduleVO schedule) -> schedule.getCourseStatus().ordinal())).toList();
+                            courseVO.setSchedules(scheduleVOS);
+                            return courseVO;
+                        }
+                ).toList();
     }
 }

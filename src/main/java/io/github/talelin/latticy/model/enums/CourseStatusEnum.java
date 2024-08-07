@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.annotation.IEnum;
 
 public enum CourseStatusEnum implements IEnum<String> {
 
-    TO_START,
     IN_PROGRESS,
+    TO_START,
     FINISHED;
 
     @Override

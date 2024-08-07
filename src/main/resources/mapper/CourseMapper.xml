@@ -22,10 +22,7 @@
         <result property="remark" column="remark"/>
         <result property="profit" column="profit"/>
         <association property="teacherId" javaType="java.lang.Integer" column="id" select="getTeacherIdByScheduleId"/>
-        <association property="teacherName" javaType="java.lang.String" column="id"
-                     select="getTeacherNameByScheduleId"/>
         <collection property="studentIds" ofType="java.lang.Integer" column="id" select="getStudentsByScheduleId"/>
-        <collection property="studentNames" ofType="java.lang.String" column="id" select="getStudentNamesByScheduleId"/>
     </resultMap>
 
     <select id="queryAllCourses" resultMap="courseResultMap">
@@ -98,27 +95,5 @@
         t_schedule_teacher tst
         WHERE
         tst.schedule_id = #{scheduleId} and tst.is_deleted = 0
-    </select>
-
-    <select id="getStudentNamesByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.String">
-        SELECT
-        lu.username as studentName
-        from t_schedule ts
-        left join t_schedule_student tss on tss.schedule_id = ts.id and tss.is_deleted = 0
-        left join t_student ts2 on ts2.id = tss.student_id and ts2.is_deleted = 0
-        left join lin_user lu on lu.id = ts2.user_id and lu.is_deleted = 0
-        where
-        ts.id = #{scheduleId} and ts.is_deleted = 0;
-    </select>
-
-    <select id="getTeacherNameByScheduleId" parameterType="java.lang.Integer" resultType="java.lang.String">
-        SELECT
-        lu.username as teacherName
-        from lin_user lu
-        left join t_teacher tt on tt.user_id = lu.id and tt.is_deleted = 0
-        left JOIN t_schedule_teacher tst on tst.teacher_id = tt.id and tst.is_deleted = 0
-        left JOIN t_schedule ts on ts.id = tst.schedule_id and ts.is_deleted = 0
-        WHERE
-        ts.id = #{scheduleId} and lu.is_deleted = 0 ;
     </select>
 </mapper>

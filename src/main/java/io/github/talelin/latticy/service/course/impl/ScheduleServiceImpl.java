@@ -70,6 +70,25 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         }
     }
 
+    @Override
+    public boolean batchUpdateSchedulesStatus(List<Integer> scheduleIds) {
+        return scheduleIds.stream().allMatch(id -> {
+            Schedule schedule = this.baseMapper.selectById(id);
+            return updateScheduleStatus(schedule);
+        });
+    }
+
+    private boolean updateScheduleStatus(Schedule schedule) {
+        LocalDateTime startDateTime = LocalDateTime.of(schedule.getCourseDate(), schedule.getStartTime());
+        LocalDateTime endDateTime = LocalDateTime.of(schedule.getCourseDate(), schedule.getEndTime());
+        CourseStatusEnum exceptStatus = CommonUtil.getCourseStatus(startDateTime, endDateTime);
+        if (!exceptStatus.equals(schedule.getStatus())) {
+            schedule.setStatus(exceptStatus);
+            return this.baseMapper.updateById(schedule) > 0;
+        }
+        return true;
+    }
+
     private void deleteScheduleRelation(Integer scheduleId) {
         // delete teacher schedule
         QueryWrapper<TeacherSchedule> teacherScheduleWrapper = new QueryWrapper<>();
