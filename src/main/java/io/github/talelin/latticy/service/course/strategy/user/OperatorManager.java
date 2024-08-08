@@ -47,9 +47,7 @@ public class OperatorManager implements UserManagerStrategy {
     @Override
     public List<CourseVO> getCourses(Integer userId) {
         List<CourseVO> courses = courseMapper.queryAllCourses();
-        courses.forEach(course -> course.getSchedules().forEach(schedule -> schedule.setDurationStr(
-                CommonUtil.getDurationStr(schedule.getDuration()))));
-        return courses;
+        return setCoursesInfo(courses);
     }
 
     @Override
