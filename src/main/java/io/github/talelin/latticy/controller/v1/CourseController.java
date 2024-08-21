@@ -6,11 +6,14 @@ import io.github.talelin.core.annotation.PermissionMeta;
 import io.github.talelin.core.annotation.PermissionModule;
 import io.github.talelin.latticy.common.LocalUser;
 import io.github.talelin.latticy.common.factory.UserManagerFactory;
+import io.github.talelin.latticy.common.mybatis.LinPage;
 import io.github.talelin.latticy.common.util.EnumUtil;
 import io.github.talelin.latticy.dto.course.PostCourseDTO;
 import io.github.talelin.latticy.dto.course.PutCourseDTO;
 import io.github.talelin.latticy.model.UserDO;
 import io.github.talelin.latticy.model.enums.EnumTypeEnum;
+import io.github.talelin.latticy.model.enums.RoleEnum;
+import io.github.talelin.latticy.service.UserService;
 import io.github.talelin.latticy.service.course.CourseService;
 import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
 import io.github.talelin.latticy.vo.CreatedVO;
@@ -18,6 +21,7 @@ import io.github.talelin.latticy.vo.DeletedVO;
 import io.github.talelin.latticy.vo.UpdatedVO;
 import io.github.talelin.latticy.vo.course.CourseVO;
 import lombok.AllArgsConstructor;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +37,7 @@ public class CourseController {
     private CourseService courseService;
     private UserManagerFactory userManagerFactory;
     private EnumUtil enumUtil;
+    private UserService userService;
 
     @PostMapping
     @GroupRequired
@@ -73,6 +78,23 @@ public class CourseController {
             courseVO.setSubjectName(enumUtil.getEnumValueByName(EnumTypeEnum.SUBJECT.value, courseVO.getSubject().getValue()));
         });
         return courses;
+    }
+
+    @GetMapping("list")
+    @GroupRequired
+    @PermissionMeta(value = "获取课程", module = "课程")
+    public LinPage<CourseVO> getPageCourses(@RequestParam Integer page, @RequestParam Integer count,
+                                            @RequestParam(required = false, name = "user_id") Integer userId) {
+        UserDO user = LocalUser.getLocalUser();
+        RoleEnum r = user.getRole();
+        Integer uid = user.getId();
+        if (r.isManager() && !ObjectUtils.isEmpty(userId) && userId > 0) {
+            UserDO userDO = userService.getById(userId);
+            r = userDO.getRole();
+            uid = userId;
+        }
+        UserManagerStrategy strategy = userManagerFactory.getUserStrategy(r);
+        return strategy.getPageCourses(uid, page, count);
     }
 
     @GetMapping("{id}")

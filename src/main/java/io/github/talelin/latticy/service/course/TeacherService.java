@@ -5,5 +5,5 @@ import io.github.talelin.latticy.model.course.Teacher;
 
 public interface TeacherService extends IService<Teacher> {
 
-    Teacher getByUserId(Integer userId);
+    String getTeacherNameById(Integer teacherId);
 }

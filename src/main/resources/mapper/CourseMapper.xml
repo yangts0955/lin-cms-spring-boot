@@ -12,6 +12,14 @@
                     foreignColumn="course_id" column="id" select="getSchedulesByCourseId"/>
     </resultMap>
 
+    <resultMap id="courseDOResultMap" type="io.github.talelin.latticy.model.course.Course">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="subject" column="subject"/>
+        <result property="grade" column="grade"/>
+        <result property="profit" column="profit"/>
+    </resultMap>
+
     <resultMap id="scheduleResultMap" type="io.github.talelin.latticy.vo.course.ScheduleVO">
         <id property="scheduleId" column="id"/>
         <result property="courseDate" column="course_date"/>
@@ -43,6 +51,20 @@
         tst.teacher_id = #{teacherId} and tc.is_deleted = 0 ;
     </select>
 
+    <select id="queryPageCourseDOsByTeacherId" resultMap="courseDOResultMap">
+        SELECT DISTINCT
+        tc.id,
+        tc.name,
+        tc.subject,
+        tc.grade,
+        tc.profit
+        from t_course tc
+        left join t_schedule ts on tc.id = ts.course_id and ts.is_deleted = 0
+        left join t_schedule_teacher tst on tst.schedule_id = ts.id and tst.is_deleted = 0
+        where
+        tst.teacher_id = #{teacherId} and tc.is_deleted = 0
+    </select>
+
     <select id="queryAllCoursesByStudentId" resultMap="courseResultMap">
         SELECT DISTINCT
         tc.id,
@@ -55,6 +77,19 @@
         left join t_schedule_student tss on tss.schedule_id = ts.id and tss.is_deleted = 0
         where
         tss.student_id = #{studentId} and tc.is_deleted = 0 ;
+    </select>
+
+    <select id="queryPageCourseDOsByStudentId" resultMap="courseDOResultMap">
+        SELECT DISTINCT
+        tc.id,
+        tc.name,
+        tc.subject,
+        tc.grade,
+        tc.profit
+        from t_course tc
+        left join t_schedule ts on tc.id = ts.course_id and ts.is_deleted = 0
+        left join t_schedule_student tss on tss.schedule_id = ts.id and tss.is_deleted = 0
+        where tss.student_id = #{studentId} and tc.is_deleted = 0
     </select>
 
     <select id="queryByCourseId" parameterType="java.lang.Integer" resultMap="courseResultMap">

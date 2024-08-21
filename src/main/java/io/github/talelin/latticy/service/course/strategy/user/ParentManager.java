@@ -1,6 +1,7 @@
 package io.github.talelin.latticy.service.course.strategy.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.github.talelin.latticy.common.mybatis.LinPage;
 import io.github.talelin.latticy.common.util.BusinessUtil;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.mapper.course.StudentMapper;
@@ -38,6 +39,11 @@ public class ParentManager implements UserManagerStrategy {
     public List<CourseVO> getCourses(Integer userId) {
         // get his child's courses
         return studentManager.getCourses(getStudentUserIdByParentUserId(userId));
+    }
+
+    @Override
+    public LinPage<CourseVO> getPageCourses(Integer userId, Integer page, Integer count) {
+        return studentManager.getPageCourses(userId, page, count);
     }
 
     @Override

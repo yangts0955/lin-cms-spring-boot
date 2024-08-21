@@ -49,6 +49,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
     @Override
     public void updateCourse(Integer courseId, PutCourseDTO courseDTO) {
         Course course = this.baseMapper.selectById(courseId);
+        course.setName(courseDTO.getName());
         course.setGrade(CommonUtil.getGradeName(courseDTO.getGrade()));
         course.setSubject(CommonUtil.getSubjectName(courseDTO.getSubject()));
         UpdateWrapper<Course> updateWrapper = new UpdateWrapper<>();

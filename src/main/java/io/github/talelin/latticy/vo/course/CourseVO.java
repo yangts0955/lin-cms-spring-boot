@@ -24,5 +24,6 @@ public class CourseVO {
     private String gradeName;
     private BigDecimal profit;
     private String remark;
+    private Integer remainingQuantity;
     private List<ScheduleVO> schedules;
 }

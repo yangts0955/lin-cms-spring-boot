@@ -1,5 +1,6 @@
 package io.github.talelin.latticy.service.course.strategy.user;
 
+import io.github.talelin.latticy.common.mybatis.LinPage;
 import io.github.talelin.latticy.common.util.BusinessUtil;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.model.enums.InnerGroupEnum;
@@ -34,6 +35,11 @@ public class GuestManager implements UserManagerStrategy {
     @Override
     public List<CourseVO> getCourses(Integer userId) {
         return new ArrayList<>();
+    }
+
+    @Override
+    public LinPage<CourseVO> getPageCourses(Integer userId, Integer page, Integer count) {
+        return new LinPage<>();
     }
 
     @Override

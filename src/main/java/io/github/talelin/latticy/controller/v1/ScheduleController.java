@@ -16,6 +16,7 @@ import io.github.talelin.latticy.vo.DeletedVO;
 import io.github.talelin.latticy.vo.UpdatedVO;
 import io.github.talelin.latticy.vo.course.ScheduleDetailVO;
 import lombok.AllArgsConstructor;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,5 +66,19 @@ public class ScheduleController {
         UserDO user = LocalUser.getLocalUser();
         UserManagerStrategy strategy = userManagerFactory.getUserStrategy(user.getRole());
         return strategy.getSchedules(user.getId());
+    }
+
+    @GetMapping("{id}")
+    @GroupRequired
+    @PermissionMeta(value = "获取日程", module = "日程")
+    public ScheduleDetailVO getSchedule(@PathVariable(value = "id") Integer scheduleId) {
+        UserDO user = LocalUser.getLocalUser();
+        UserManagerStrategy strategy = userManagerFactory.getUserStrategy(user.getRole());
+        List<ScheduleDetailVO> schedules = strategy.getSchedules(user.getId());
+        List<ScheduleDetailVO> list = schedules.stream().filter(schedule -> schedule.getScheduleId().equals(scheduleId)).toList();
+        if (!ObjectUtils.isEmpty(list)) {
+            return list.get(0);
+        }
+        throw new FailedException("您没有权限查看该日程");
     }
 }

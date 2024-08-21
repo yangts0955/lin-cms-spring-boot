@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface QueryService {
 
-    List<UserSimpleVO> getUserList(RoleEnum role, RuleSortStrategy strategy, String condition);
+    List<UserSimpleVO> getUserList(RoleEnum role, RuleSortStrategy sortStrategy, String matter);
+
 }

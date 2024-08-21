@@ -1,8 +1,8 @@
 package io.github.talelin.latticy.common.configuration;
 
-import io.github.talelin.latticy.common.interceptor.RequestLogInterceptor;
 import io.github.talelin.autoconfigure.interceptor.AuthorizeInterceptor;
 import io.github.talelin.autoconfigure.interceptor.LogInterceptor;
+import io.github.talelin.latticy.common.interceptor.RequestLogInterceptor;
 import io.github.talelin.latticy.module.file.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*") // to config request source
-                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE")
+                .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true)
                 .maxAge(3600)
                 .allowedHeaders("*");

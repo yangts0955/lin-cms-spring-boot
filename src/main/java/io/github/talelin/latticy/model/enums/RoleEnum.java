@@ -30,4 +30,8 @@ public enum RoleEnum implements IEnum<String> {
     public String getValue() {
         return this.name();
     }
+
+    public boolean isManager() {
+        return this.equals(ROOT) || this.equals(OPERATOR);
+    }
 }

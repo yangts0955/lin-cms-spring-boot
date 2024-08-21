@@ -1,32 +1,32 @@
 package io.github.talelin.latticy.service.course.strategy.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.github.talelin.autoconfigure.exception.FailedException;
 import io.github.talelin.latticy.common.constant.CommonConstant;
+import io.github.talelin.latticy.common.mybatis.LinPage;
+import io.github.talelin.latticy.common.util.BeanCopyUtil;
 import io.github.talelin.latticy.common.util.BusinessUtil;
 import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.user.RegisterDTO;
 import io.github.talelin.latticy.mapper.course.CourseMapper;
 import io.github.talelin.latticy.mapper.course.StudentMapper;
 import io.github.talelin.latticy.model.UserDO;
+import io.github.talelin.latticy.model.course.Course;
 import io.github.talelin.latticy.model.course.Parent;
 import io.github.talelin.latticy.model.course.Student;
 import io.github.talelin.latticy.model.enums.GradeEnum;
 import io.github.talelin.latticy.model.enums.InnerGroupEnum;
 import io.github.talelin.latticy.model.enums.RoleEnum;
+import io.github.talelin.latticy.model.mapper.CourseConvertor;
 import io.github.talelin.latticy.service.UserService;
 import io.github.talelin.latticy.service.course.ParentService;
-import io.github.talelin.latticy.service.course.ScheduleService;
 import io.github.talelin.latticy.service.course.StudentService;
 import io.github.talelin.latticy.vo.course.CourseVO;
 import io.github.talelin.latticy.vo.course.ScheduleDetailVO;
-import io.github.talelin.latticy.vo.course.ScheduleVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -38,7 +38,7 @@ public class StudentManager implements UserManagerStrategy {
     private UserService userService;
     private StudentMapper studentMapper;
     private CourseMapper courseMapper;
-    private ScheduleService scheduleService;
+    private CourseConvertor courseConvertor;
 
     @Transactional
     public void register(RegisterDTO studentRegisterDto) {
@@ -79,8 +79,19 @@ public class StudentManager implements UserManagerStrategy {
     @Override
     public List<CourseVO> getCourses(Integer userId) {
         Integer studentId = getStudentIdByUserId(userId);
-        List<CourseVO> courses = courseMapper.queryAllCoursesByStudentId(studentId);
-        return setCoursesInfo(courses);
+        return courseMapper.queryAllCoursesByTeacherId(studentId);
+
+    }
+
+    @Override
+    public LinPage<CourseVO> getPageCourses(Integer userId, Integer page, Integer count) {
+        LinPage<Course> linPage = new LinPage<>(page, count);
+        Integer studentId = getStudentIdByUserId(userId);
+        LinPage<Course> courses = courseMapper.queryPageCourseDOsByStudentId(linPage, studentId);
+        LinPage<CourseVO> courseVOs = new LinPage<>();
+        BeanCopyUtil.copyNonNullProperties(courses, courseVOs);
+        courseVOs.setRecords(courseConvertor.convertCourseToCourseVO(courses.getRecords()));
+        return courseVOs;
     }
 
     @Override
@@ -109,31 +120,5 @@ public class StudentManager implements UserManagerStrategy {
         studentService.updateById(student);
         parent.setStudentId(student.getId());
         parentService.saveOrUpdate(parent);
-    }
-
-    private List<CourseVO> setCoursesInfo(List<CourseVO> courses) {
-        return courses.stream()
-                .map(courseVO -> {
-                            List<Integer> scheduleIds = courseVO.getSchedules().stream().map(ScheduleVO::getScheduleId).toList();
-                            if (!scheduleService.batchUpdateSchedulesStatus(scheduleIds)) {
-                                throw new FailedException("update schedules status failed");
-                            }
-                            List<ScheduleVO> scheduleVOS = courseVO.getSchedules().stream()
-                                    .map(scheduleVO -> {
-                                        scheduleVO.setDurationStr(CommonUtil.getDurationStr(scheduleVO.getDuration()));
-                                        scheduleVO.setTeacherName(
-                                                userService.getById(scheduleVO.getTeacherId())
-                                                        .getRealName());
-                                        List<String> studentNames = userService.listByIds(scheduleVO.getStudentIds()).stream()
-                                                .map(UserDO::getRealName)
-                                                .toList();
-                                        scheduleVO.setStudentNames(studentNames);
-                                        return scheduleVO;
-                                    })
-                                    .sorted(Comparator.comparing((ScheduleVO schedule) -> schedule.getCourseStatus().ordinal())).toList();
-                            courseVO.setSchedules(scheduleVOS);
-                            return courseVO;
-                        }
-                ).toList();
     }
 }
