@@ -2,6 +2,7 @@ package io.github.talelin.latticy.service.course.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.github.talelin.autoconfigure.exception.FailedException;
 import io.github.talelin.latticy.common.util.CommonUtil;
 import io.github.talelin.latticy.dto.course.PostScheduleDTO;
 import io.github.talelin.latticy.dto.course.PutScheduleDTO;
@@ -9,6 +10,7 @@ import io.github.talelin.latticy.mapper.course.*;
 import io.github.talelin.latticy.model.course.*;
 import io.github.talelin.latticy.model.enums.CourseStatusEnum;
 import io.github.talelin.latticy.service.course.ScheduleService;
+import io.github.talelin.latticy.vo.course.ScheduleCreateVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,19 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
     private StudentScheduleMapper studentScheduleMapper;
     private AccountingSummaryMapper accountingSummaryMapper;
     private CourseSummaryMapper courseSummaryMapper;
+
+    @Override
+    @Transactional
+    public ScheduleCreateVO createSingleScheduleBeingTiedToCourse(PostScheduleDTO scheduleDTO) {
+        Schedule schedule = buildSchedule(scheduleDTO);
+        boolean scheduleInsert = this.baseMapper.insert(schedule) > 0;
+        boolean teacherScheduleInsert = bindTeacherSchedule(scheduleDTO.getTeacherId(), schedule.getId());
+        boolean studentScheduleInsert = bindStudentSchedule(scheduleDTO.getStudentIds(), schedule.getId());
+        if (!(scheduleInsert && teacherScheduleInsert && studentScheduleInsert)) {
+            throw new FailedException(10200, "创建日程失败");
+        }
+        return new ScheduleCreateVO(schedule.getId());
+    }
 
     @Override
     @Transactional
@@ -141,8 +156,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         LocalDate courseDate = scheduleDTO.getCourseDate();
         LocalTime startTime = scheduleDTO.getStartTime();
         LocalTime endTime = scheduleDTO.getEndTime();
-        LocalDateTime startDateTime = courseDate.atTime(startTime);
-        LocalDateTime endDateTime = courseDate.atTime(endTime);
+        LocalDateTime startDateTime = CommonUtil.calculateLocalDateTime(courseDate, startTime);
+        LocalDateTime endDateTime = CommonUtil.calculateLocalDateTime(courseDate, endTime);
         return Schedule.builder()
                 .courseDate(courseDate)
                 .startTime(startTime)
@@ -158,8 +173,8 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> i
         LocalDate courseDate = scheduleDTO.getCourseDate();
         LocalTime startTime = scheduleDTO.getStartTime();
         LocalTime endTime = scheduleDTO.getEndTime();
-        LocalDateTime startDateTime = courseDate.atTime(startTime);
-        LocalDateTime endDateTime = courseDate.atTime(endTime);
+        LocalDateTime startDateTime = CommonUtil.calculateLocalDateTime(courseDate, startTime);
+        LocalDateTime endDateTime = CommonUtil.calculateLocalDateTime(courseDate, endTime);
         return Schedule.builder()
                 .courseDate(courseDate)
                 .startTime(startTime)

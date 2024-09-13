@@ -11,6 +11,8 @@ import io.github.talelin.latticy.service.course.ScheduleService;
 import io.github.talelin.latticy.service.course.StudentService;
 import io.github.talelin.latticy.service.course.TeacherService;
 import io.github.talelin.latticy.vo.course.CourseVO;
+import io.github.talelin.latticy.vo.course.ScheduleDetailVO;
+import io.github.talelin.latticy.vo.course.SchedulePanelVO;
 import io.github.talelin.latticy.vo.course.ScheduleVO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -77,6 +79,26 @@ public class CourseConvertor {
                         }
                 ).toList();
     }
+
+    public List<SchedulePanelVO> convertScheduleDetailVOToPanelVO(List<ScheduleDetailVO> scheduleDetails) {
+        return scheduleDetails.stream()
+                .map(this::convertScheduleDetailToPanel)
+                .toList();
+    }
+
+    public SchedulePanelVO convertScheduleDetailToPanel(ScheduleDetailVO schedule) {
+        return SchedulePanelVO.builder()
+                .id(schedule.getScheduleId())
+                .title("")
+                .name(schedule.getName())
+                .grade(enumUtil.getEnumValueByName(EnumTypeEnum.GRADE.value, schedule.getGrade().getValue()))
+                .subject(enumUtil.getEnumValueByName(EnumTypeEnum.SUBJECT.value, schedule.getSubject().getValue()))
+                .teacher(schedule.getTeacherName())
+                .start(CommonUtil.calculateLocalDateTime(schedule.getCourseDate(), schedule.getStartTime()))
+                .end(CommonUtil.calculateLocalDateTime(schedule.getCourseDate(), schedule.getEndTime()))
+                .build();
+    }
+
 
     private Integer countRemainingQuantity(List<ScheduleVO> schedules) {
         return (int) schedules.stream()

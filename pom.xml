@@ -11,9 +11,9 @@
 
     <groupId>io.github.talelin</groupId>
     <artifactId>latticy</artifactId>
-    <version>0.2.1-RELEASE</version>
-    <name>latticy</name>
-    <description>Demo project for lin cms</description>
+    <version>1.0</version>
+    <name>QT-CMS</name>
+    <description>CMS for courses management</description>
 
     <properties>
         <argLine>-Dfile.encoding=UTF-8</argLine>

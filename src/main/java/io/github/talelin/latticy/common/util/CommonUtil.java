@@ -7,6 +7,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.UUID;
 
@@ -91,5 +92,9 @@ public final class CommonUtil {
             return now.minusYears(minusYear).withMonth(7).withDayOfMonth(1);
         }
         return null;
+    }
+
+    public static LocalDateTime calculateLocalDateTime(LocalDate date, LocalTime time) {
+        return date.atTime(time);
     }
 }

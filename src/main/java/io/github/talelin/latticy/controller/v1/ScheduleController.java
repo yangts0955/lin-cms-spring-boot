@@ -9,12 +9,14 @@ import io.github.talelin.latticy.common.factory.UserManagerFactory;
 import io.github.talelin.latticy.dto.course.PostScheduleDTO;
 import io.github.talelin.latticy.dto.course.PutScheduleDTO;
 import io.github.talelin.latticy.model.UserDO;
+import io.github.talelin.latticy.model.mapper.CourseConvertor;
 import io.github.talelin.latticy.service.course.ScheduleService;
 import io.github.talelin.latticy.service.course.strategy.user.UserManagerStrategy;
-import io.github.talelin.latticy.vo.CreatedVO;
 import io.github.talelin.latticy.vo.DeletedVO;
 import io.github.talelin.latticy.vo.UpdatedVO;
+import io.github.talelin.latticy.vo.course.ScheduleCreateVO;
 import io.github.talelin.latticy.vo.course.ScheduleDetailVO;
+import io.github.talelin.latticy.vo.course.SchedulePanelVO;
 import lombok.AllArgsConstructor;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
@@ -31,16 +33,13 @@ public class ScheduleController {
 
     private ScheduleService scheduleService;
     private UserManagerFactory userManagerFactory;
+    private CourseConvertor courseConvertor;
 
     @PostMapping
     @GroupRequired
     @PermissionMeta(value = "创建日程", module = "日程")
-    public CreatedVO createSchedule(@RequestBody PostScheduleDTO scheduleDTO) {
-        boolean success = scheduleService.createSchedule(scheduleDTO);
-        if (!success) {
-            throw new FailedException(10200, "创建日程失败");
-        }
-        return new CreatedVO(1);
+    public ScheduleCreateVO createSchedule(@RequestBody PostScheduleDTO scheduleDTO) {
+        return scheduleService.createSingleScheduleBeingTiedToCourse(scheduleDTO);
     }
 
     @DeleteMapping("{id}")
@@ -80,5 +79,19 @@ public class ScheduleController {
             return list.get(0);
         }
         throw new FailedException("您没有权限查看该日程");
+    }
+
+    @GetMapping("/panel")
+    @GroupRequired
+    @PermissionMeta(value = "获取日程", module = "日程")
+    public List<SchedulePanelVO> getScheduleListForPanel() {
+        return courseConvertor.convertScheduleDetailVOToPanelVO(this.getSchedules());
+    }
+
+    @GetMapping("/panel/{id}")
+    @GroupRequired
+    @PermissionMeta(value = "获取日程", module = "日程")
+    public SchedulePanelVO getScheduleForPanel(@PathVariable Integer id) {
+        return courseConvertor.convertScheduleDetailToPanel(this.getSchedule(id));
     }
 }
