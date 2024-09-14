@@ -1,5 +1,6 @@
 package io.github.talelin.latticy.common.interceptor;
 
+import io.github.talelin.latticy.common.LocalUser;
 import io.github.talelin.latticy.common.util.IPUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -26,11 +27,12 @@ public class RequestLogInterceptor implements AsyncHandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        log.info("[{}] -> [{}] from: {} costs: {}ms",
+        log.info("[{}] -> [{}] from: {} costs: {}ms, access user: {}",
                 request.getMethod(),
                 request.getServletPath(),
                 IPUtil.getIPFromRequest(request),
-                System.currentTimeMillis() - startTime.get()
+                System.currentTimeMillis() - startTime.get(),
+                LocalUser.getLocalUser().getUsername()
         );
         startTime.remove();
     }

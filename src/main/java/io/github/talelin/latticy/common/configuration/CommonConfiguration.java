@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * @author pedro@TaleLin
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 public class CommonConfiguration {
 
     @Bean
+    @DependsOn("AuthorizeVerifyResolver")
     public RequestLogInterceptor requestLogInterceptor() {
         return new RequestLogInterceptor();
     }

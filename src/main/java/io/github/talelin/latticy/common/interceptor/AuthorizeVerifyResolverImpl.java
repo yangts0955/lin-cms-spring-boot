@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @author Juzi@TaleLin
  * 鉴权实现类
  */
-@Component
+@Component(value = "AuthorizeVerifyResolver")
 public class AuthorizeVerifyResolverImpl implements AuthorizeVerifyResolver {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";

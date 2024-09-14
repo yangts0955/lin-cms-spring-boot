@@ -9,8 +9,8 @@ services:
     environment:
       - MYSQL_HOST=db_mysql
       - MYSQL_PORT=3306
-      - MYSQL_USER=alice
-      - MYSQL_PASSWORD=123456
+      - MYSQL_USER=neil_yang
+      - MYSQL_PASSWORD=yang12345
       - SERVICE_ENVIRONMENT=dev
     depends_on:
       db_mysql:
