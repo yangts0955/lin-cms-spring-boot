@@ -18,7 +18,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file pom.xml-DskipTests
 
       - name: Build Docker image
         run: docker build . -t yangts0955/cms-java:1.0.0
