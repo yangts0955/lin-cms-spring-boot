@@ -3,7 +3,7 @@ version: '3.9'
 services:
   cms-system:
     build: .
-    image: cms-system:1.0
+    image: yangts0955/cms-java:1.0.0
     ports:
       - "10200:10100"
     environment:
