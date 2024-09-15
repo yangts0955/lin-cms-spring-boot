@@ -1,8 +1,7 @@
 version: '3.9'
 
 services:
-  cms-system:
-    build: .
+  cms-java:
     image: yangts0955/cms-java:1.0.0
     ports:
       - "10200:10100"
@@ -12,13 +11,29 @@ services:
       - MYSQL_USER=neil_yang
       - MYSQL_PASSWORD=yang12345
       - SERVICE_ENVIRONMENT=dev
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:10200/actuator/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
     depends_on:
       db_mysql:
         condition: service_healthy
-
     restart: always
     networks:
       cms-system:
+
+  cms-vue:
+    image: yangts0955/cms-vue:1.0.0
+    ports:
+      - "8080:80"
+#    depends_on:
+#      cms-java:
+#        condition: service_healthy
+    networks:
+      cms-system:
+
   db_mysql:
     image: mysql:latest
     ports:
@@ -26,9 +41,9 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - MYSQL_DATABASE=lin_cms
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=PXCEa0Ld!
+      - MYSQL_USER=neil_yang
+      - MYSQL_PASSWORD=yang12345
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u ${MYSQL_USER} --password=${MYSQL_PASSWORD}" ]
       interval: 5s
