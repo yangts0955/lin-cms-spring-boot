@@ -24,6 +24,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
         <freemarker.version>2.3.31</freemarker.version>
+        <jhash.version>2.2.0</jhash.version>
     </properties>
 
     <dependencies>
@@ -120,6 +121,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amdelamar</groupId>
+            <artifactId>jhash</artifactId>
+            <version>${jhash.version}</version>
         </dependency>
     </dependencies>
 
