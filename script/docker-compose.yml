@@ -2,21 +2,15 @@ version: '3.9'
 
 services:
   cms-java:
-    image: yangts0955/cms-java:1.0.0
+    image: crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms:${CMS_JAVA_VERSION}
     ports:
       - "10200:10100"
     environment:
       - MYSQL_HOST=db_mysql
-      - MYSQL_PORT=3306
-      - MYSQL_USER=neil_yang
-      - MYSQL_PASSWORD=yang12345
-      - SERVICE_ENVIRONMENT=dev
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:10200/actuator/health" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 40s
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - SERVICE_ENVIRONMENT=${SERVICE_ENVIRONMENT}
     depends_on:
       db_mysql:
         condition: service_healthy
@@ -25,12 +19,9 @@ services:
       cms-system:
 
   cms-vue:
-    image: yangts0955/cms-vue:1.0.0
+    image: crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms-vue:${CMS_VUE_VERSION}
     ports:
       - "8080:80"
-#    depends_on:
-#      cms-java:
-#        condition: service_healthy
     networks:
       cms-system:
 
