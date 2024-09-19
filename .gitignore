@@ -35,5 +35,5 @@ build/
 .vscode/
 assets/
 logs/
-
+/script/.env
 
