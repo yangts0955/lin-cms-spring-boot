@@ -17,17 +17,24 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      - name: Extract version from pom.xml
+        run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml -DskipTests
 
       - name: Build Docker image
-        run: docker build . -t yangts0955/cms-java:1.0.0
+        run: docker build . -t yangts0955/cms-java:${{ env.VERSION }}
 
-      - name: Log in to Docker Hub
+      - name: Log in to Alibaba Cloud Container Registry
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
 
-      - name: Push Docker image to Docker Hub
-        run: docker push yangts0955/cms-java:1.0.0
+      - name: Tag Docker image
+        run: docker tag yangts0955/cms-java:${{ env.VERSION }} crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms:${{ env.VERSION }}
+
+      - name: Push Docker image to Alibaba Cloud Container Registry
+        run: docker push crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms::${{ env.VERSION }}

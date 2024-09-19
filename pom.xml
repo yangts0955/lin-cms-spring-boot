@@ -11,7 +11,7 @@
 
     <groupId>io.github.talelin</groupId>
     <artifactId>latticy</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <name>QT-CMS</name>
     <description>CMS for courses management</description>
 
