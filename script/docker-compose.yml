@@ -32,9 +32,9 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - MYSQL_DATABASE=lin_cms
-      - MYSQL_ROOT_PASSWORD=PXCEa0Ld!
-      - MYSQL_USER=neil_yang
-      - MYSQL_PASSWORD=yang12345
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u ${MYSQL_USER} --password=${MYSQL_PASSWORD}" ]
       interval: 5s

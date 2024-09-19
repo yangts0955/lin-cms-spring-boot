@@ -8,10 +8,10 @@ server:
 spring:
   # 数据源配置，请修改为你项目的实际配置
   datasource:
-    username: ${MYSQL_USER:neil_yang}
-    password: ${MYSQL_PASSWORD:yang12345}
+    username: ${MYSQL_USER:}
+    password: ${MYSQL_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:13306}/lin_cms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF8
+    url: jdbc:mysql://${MYSQL_HOST:}:${MYSQL_PORT:}/lin_cms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF8
   flyway:
     enabled: true
     table: flyway_schema_history
