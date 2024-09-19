@@ -37,4 +37,4 @@ jobs:
         run: docker tag yangts0955/cms-java:${{ env.VERSION }} crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms:${{ env.VERSION }}
 
       - name: Push Docker image to Alibaba Cloud Container Registry
-        run: docker push crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms::${{ env.VERSION }}
+        run: docker push crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms:${{ env.VERSION }}
