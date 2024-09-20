@@ -1,6 +1,13 @@
 #bin/sh
 docker login --username=小白瞎搞开发 crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com
 
+
+# 检查 docker login 命令的退出状态
+if [ $? -ne 0 ]; then
+  echo "Docker login failed. Exiting..."
+  exit 1
+fi
+
 # 初始化变量
 CMS_JAVA_VERSION=""
 CMS_VUE_VERSION=""
@@ -33,7 +40,7 @@ fi
 docker pull crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms:$CMS_JAVA_VERSION
 docker pull crpi-gjiqcc10v58u83a9.cn-hangzhou.personal.cr.aliyuncs.com/qtcms/qt-cms-vue:$CMS_VUE_VERSION
 
-docker-compose down -v
+docker-compose down
 sh mvn clean -DskipTests=true install
 docker-compose -f docker-compose.yml up --force-recreate --build -d
 docker image prune --force

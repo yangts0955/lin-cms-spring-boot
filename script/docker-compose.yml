@@ -27,6 +27,8 @@ services:
 
   db_mysql:
     image: mysql:latest
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
       - "13306:3306"
     environment:
@@ -44,3 +46,5 @@ services:
       cms-system:
 networks:
   cms-system:
+volumes:
+  db_data:
